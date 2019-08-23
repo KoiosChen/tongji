@@ -7,6 +7,7 @@ from flask_session import Session
 import queue
 from . import init_logging
 import redis
+from fdfs_client.client import *
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
@@ -23,6 +24,8 @@ callback_q = queue.Queue(maxsize=1000)
 redis_db = redis.Redis(host='localhost', port=6379, db=3)
 
 logger = init_logging.init()
+
+fdfs_client = Fdfs_client('/etc/fdfs/client.conf')
 
 def create_app(config_name):
     app = Flask(__name__)

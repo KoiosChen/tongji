@@ -61,7 +61,7 @@ def call_back(cb_url, cb_value):
         'Cache-Control': 'no-store'
     }
 
-    cb_value['url'] = cb_value['url'] + cb_value['id'] + '.pdf'
+    # cb_value['url'] = cb_value['url'] + cb_value['id'] + '.pdf'
 
     callback_q.put({'headers': headers,
                     'cb_url': cb_url,

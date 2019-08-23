@@ -4,6 +4,7 @@ from app import create_app, db
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 import multiprocessing
+from app.MyModule import ResultCallBack
 
 __author__ = 'Koios'
 
@@ -14,8 +15,8 @@ migrate = Migrate(app, db)
 # 启动调度程序
 
 # 处理回调
-# ResultCallBack.callback_worker(thread_num=10)
-# print('ResultCallBack.callback_worker start')
+ResultCallBack.callback_worker(thread_num=10)
+print('ResultCallBack.callback_worker start')
 
 
 def make_shell_context():
