@@ -9,3 +9,6 @@ WATERMARK_TEMPLATE = PATH_PREFIX + 'static/watermark_template/'
 # CALLBACK_URL = "http://app.webrokers.hk:4000/advice/{}/notify"
 CALLBACK_URL = {"version_0": "http://app.webrokers.hk:4000/advice/{}/notify",
                 "lxj": "http://117.86.32.131:3010/api/notify"}
+
+PermissionIP = ['112.64.216.41', '218.91.224.63', '192.168.240.1', '172.31.212.106', '61.147.111.46',
+                '222.184.138.28', '39.108.7.4']

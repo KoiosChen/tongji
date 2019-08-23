@@ -1,5 +1,5 @@
 from ctypes import *
-from .. import init_logging, fdfs_client
+from .. import init_logging, fdfs_client, p_msg_cb_func
 from .plate_struct_class import LightParam
 from ..MyModule.ResultCallBack import call_back
 
@@ -65,14 +65,17 @@ class Camera:
                             'url': 'http://221.181.89.66:811',
                             'ret': ret})
 
-
     def __init__(self, ip):
         self.ip = ip
         self.r = cdll.LoadLibrary('../static/ice_ipcsdk_lib/libice_ipcsdk.so')
 
-    def connect_camera(self):
         self.r.ICE_IPCSDK_Open.restype = POINTER(c_void_p)
+        self.r.ICE_IPCSDK_GetStatus.restype = c_int
+        self.r.ICE_IPCSDK_SetLightParam.restype = c_int
+        self.r.ICE_IPCSDK_Capture.restype = c_int
+        self.r.ICE_IPCSDK_OpenGate.restype = c_int
 
+    def connect_camera(self):
         ICE_IPCSDK_Plate = CFUNCTYPE(c_void_p,
                                      c_void_p, POINTER(c_char * 48), POINTER(c_char * 48), POINTER(c_char * 48),
                                      c_void_p, c_long, c_void_p, c_long,
@@ -86,18 +89,14 @@ class Camera:
         self.hSDK = self.r.ICE_IPCSDK_Open(c_char_p(ip.encode('utf-8')), plate_func, 'NULL')
 
     def device_status(self):
-        self.r.ICE_IPCSDK_GetStatus.restype = c_int
         return self.r.ICE_IPCSDK_GetStatus(self.hSDK)
 
     def setLightParam(self, luminance):
-        lightparam = LightParam((luminance - 1) * 20 + 10)
-        self.r.ICE_IPCSDK_SetLightParam.restype = c_int
-        light_resutl = self.r.ICE_IPCSDK_SetLightParam(self.hSDK, pointer(lightparam))
-        print(light_resutl)
+        light_param = LightParam((luminance - 1) * 20 + 10)
+        light_result = self.r.ICE_IPCSDK_SetLightParam(self.hSDK, pointer(light_param))
+        logger.info(f'set light param result>> {light_result}')
 
     def capture_pic(self):
-        self.r.ICE_IPCSDK_Capture.restype = c_int
-
         pvPicData = (c_void_p * 1048576)()
         nPicSize = c_long(1048576)
         nPicLen = c_long(0)
@@ -106,20 +105,28 @@ class Camera:
 
         capture_result = self.r.ICE_IPCSDK_Capture(self.hSDK, pvPicData, nPicSize, pointer(nPicLen))
 
-        logger.debug('capture result>> {} len>> {}'.format(capture_result, nPicLen.value))
+        logger.debug(f'capture result>> {capture_result} len>> {nPicLen.value}')
 
-        with open('./test_pic.jpg', 'wb') as f:
-            f.write(pvPicData)
+        ret = fdfs_client.upload_by_buffer(pvPicData)
+        logger.info(ret)
+        call_back(cb_url='http://127.0.0.1/camera',
+                  cb_value={'code': 'camera',
+                            'camera_ip': self.ip,
+                            'url': 'http://221.181.89.66:811',
+                            'ret': ret})
 
     def open_gate(self):
         logger.info('Open gate {}'.format(self.ip))
-        self.r.ICE_IPCSDK_OpenGate.restype = c_int
-
         self.r.ICE_IPCSDK_OpenGate(self.hSDK)
 
+    def close_connect(self):
+        logger.info(f'close connection to the camera {self.ip}')
+        self.r.ICE_IPCSDK_Close(self.hSDK)
 
 if __name__ == '__main__':
-    ip = '10.170.0.230'
+    IP = ['10.170.0.230', '10.170.0.231']
+    obj = []
 
-    camera = Camera(ip)
-    camera.connect_camera()
+    for index, ip in enumerate(IP):
+        obj[index]= Camera(ip)
+        obj[index].connect_camera()

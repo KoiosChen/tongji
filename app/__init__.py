@@ -27,6 +27,10 @@ logger = init_logging.init()
 
 fdfs_client = Fdfs_client('/etc/fdfs/client.conf')
 
+hSDK_handle = {}
+
+p_msg_cb_func = []
+
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
