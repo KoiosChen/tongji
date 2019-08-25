@@ -1,9 +1,6 @@
 from functools import wraps
 from flask import abort, request, jsonify
-from .models import Permission
 from . import logger
-from .MyModule.ResultCallBack import call_back
-
 
 def permission_ip(permission_ip_list):
     def decorator(f):

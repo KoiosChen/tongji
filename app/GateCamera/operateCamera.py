@@ -1,7 +1,8 @@
 from ctypes import *
-from .. import init_logging, fdfs_client, p_msg_cb_func
+from .. import init_logging, fdfs_client, p_msg_cb_func, work_q
 from .plate_struct_class import LightParam
 from ..MyModule.ResultCallBack import call_back
+import os
 
 logger = init_logging.init()
 
@@ -12,7 +13,7 @@ class Camera:
                          nPlatePosLeft,
                          nPlatePosTop, nPlatePosRight, nPltePosBottom,
                          fPlateConfidence, nVehicleColor, nPlateType, nVehicleDir, nAlarmType, nSpeed, nCapTime,
-                         nVehicleType, nResultigh, nResultLow):
+                         nVehicleType, nResultHigh, nResultLow):
         """
         作为ICE_IPCSDK_Open的回调函数
         :pvParam = c_void_p()
@@ -39,11 +40,12 @@ class Camera:
         :nResultLow = c_long()
         :return:
         """
-        logger.debug('ip address>> {}'.format(pcIP.value))
-        if pcNumber:
-            logger.debug('plate number>> {}'.format(pcNumber.value))
+        logger.debug('in ice ipcsdk plate callback function')
 
-        logger.debug('pic len>> ', nPicLen.value)
+        # if pcNumber:
+        #    logger.debug('plate number>> {}'.format(pcNumber.value))
+
+        # logger.debug('pic len>> ', nPicLen.value)
 
         # with open('./test_pic.jpg', 'wb') as f:
         #     f.write(pvPicData)
@@ -57,17 +59,29 @@ class Camera:
         'Storage IP' : storage_ip
         }
         """
-        ret = fdfs_client.upload_by_buffer(pvPicData)
-        logger.info(ret)
-        call_back(cb_url='http://127.0.0.1/camera',
-                  cb_value={'code': 'camera',
-                            'camera_ip': pcIP.value,
-                            'url': 'http://221.181.89.66:811',
-                            'ret': ret})
+        # ip = ''.join([i.decode() for i in pcIP.contents if i is not None])
+        ip = pcIP.value
+
+        work_q.put(ip)
+        # pic = []
+        #
+        # pic = pvPicData.contents
+        #
+        # with open('/opt/tongji/app/static/plate_pic/test_pic.jpg', 'wb') as f:
+        #     f.write(pic)
+        # ret = fdfs_client.upload_by_filename('/opt/tongji/app/static/plate_pic/test_pic.jpg')
+        # os.remove('/opt/tongji/app/static/plate_pic/test_pic.jpg')
+        # logger.info(ret)
+        # call_back(cb_url='http://127.0.0.1/camera',
+        #           cb_value={'code': 'camera',
+        #                     'camera_ip': pcIP.value,
+        #                     'url': 'http://221.181.89.66:811',
+        #                     'ret': ret})
+
 
     def __init__(self, ip):
         self.ip = ip
-        self.r = cdll.LoadLibrary('../static/ice_ipcsdk_lib/libice_ipcsdk.so')
+        self.r = cdll.LoadLibrary('/Users/Peter/python/tongji/app/static/ice_ipcsdk_lib/libice_ipcsdk.so')
 
         self.r.ICE_IPCSDK_Open.restype = POINTER(c_void_p)
         self.r.ICE_IPCSDK_GetStatus.restype = c_int
@@ -76,17 +90,16 @@ class Camera:
         self.r.ICE_IPCSDK_OpenGate.restype = c_int
 
     def connect_camera(self):
-        ICE_IPCSDK_Plate = CFUNCTYPE(c_void_p,
-                                     c_void_p, POINTER(c_char * 48), POINTER(c_char * 48), POINTER(c_char * 48),
-                                     c_void_p, c_long, c_void_p, c_long,
+        ICE_IPCSDK_Plate = CFUNCTYPE(c_void_p, c_void_p, POINTER(c_char_p), POINTER(c_char_p), POINTER(c_char_p),
+                                     POINTER(c_void_p * 1048576), c_long, c_void_p, c_long,
                                      c_long, c_long, c_long, c_long,
                                      c_float, c_long,
                                      c_long, c_long, c_long, c_long,
                                      c_long, c_long, c_long, c_long)
 
-        plate_func = ICE_IPCSDK_Plate(self.ice_ipcsdk_plate)
+        p_msg_cb_func[self.ip] = ICE_IPCSDK_Plate(self.ice_ipcsdk_plate)
 
-        self.hSDK = self.r.ICE_IPCSDK_Open(c_char_p(ip.encode('utf-8')), plate_func, 'NULL')
+        self.hSDK = self.r.ICE_IPCSDK_Open(c_char_p(self.ip.encode('utf-8')), p_msg_cb_func[self.ip], 'NULL')
 
     def device_status(self):
         return self.r.ICE_IPCSDK_GetStatus(self.hSDK)
@@ -107,7 +120,11 @@ class Camera:
 
         logger.debug(f'capture result>> {capture_result} len>> {nPicLen.value}')
 
-        ret = fdfs_client.upload_by_buffer(pvPicData)
+        with open('./test_pic.jpg', 'wb') as f:
+            f.write(pvPicData)
+
+        ret = fdfs_client.upload_by_filename('./test_pic.jpg')
+        os.remove('./test_pic.jpg')
         logger.info(ret)
         call_back(cb_url='http://127.0.0.1/camera',
                   cb_value={'code': 'camera',
