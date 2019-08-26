@@ -60,24 +60,22 @@ class Camera:
         }
         """
         # ip = ''.join([i.decode() for i in pcIP.contents if i is not None])
-        ip = pcIP.value
 
-        work_q.put(ip)
-        # pic = []
-        #
-        # pic = pvPicData.contents
-        #
-        # with open('/opt/tongji/app/static/plate_pic/test_pic.jpg', 'wb') as f:
-        #     f.write(pic)
-        # ret = fdfs_client.upload_by_filename('/opt/tongji/app/static/plate_pic/test_pic.jpg')
-        # os.remove('/opt/tongji/app/static/plate_pic/test_pic.jpg')
-        # logger.info(ret)
-        # call_back(cb_url='http://127.0.0.1/camera',
-        #           cb_value={'code': 'camera',
-        #                     'camera_ip': pcIP.value,
-        #                     'url': 'http://221.181.89.66:811',
-        #                     'ret': ret})
-
+        # work_q.put(ip)
+        pic = pvPicData.contents
+        # ret 格式：
+        # {'Group name': b'group1',
+        #  'Remote file_id': b'group1/M00/00/01/Cr4A-11iOj-AL4Q2ABAAALDtZcg754.jpg',
+        #  'Status': 'Upload successed.',
+        #  'Local file name': './test_pic.jpg',
+        #  'Uploaded size': '1.00MB',
+        #  'Storage IP': b'10.190.0.251'}
+        ret = fdfs_client.upload_by_buffer(pic, file_ext_name='jpg')
+        logger.info(ret)
+        work_q.put({'code': 'camera',
+                    'camera_ip': pcIP.value,
+                    'url': 'http://221.181.89.66:811',
+                    'ret': ret})
 
     def __init__(self, ip):
         self.ip = ip
@@ -91,7 +89,7 @@ class Camera:
 
     def connect_camera(self):
         ICE_IPCSDK_Plate = CFUNCTYPE(c_void_p, c_void_p, POINTER(c_char_p), POINTER(c_char_p), POINTER(c_char_p),
-                                     POINTER(c_void_p * 1048576), c_long, c_void_p, c_long,
+                                     POINTER(c_char * 1048576), c_long, c_void_p, c_long,
                                      c_long, c_long, c_long, c_long,
                                      c_float, c_long,
                                      c_long, c_long, c_long, c_long,
@@ -126,11 +124,10 @@ class Camera:
         ret = fdfs_client.upload_by_filename('./test_pic.jpg')
         os.remove('./test_pic.jpg')
         logger.info(ret)
-        call_back(cb_url='http://127.0.0.1/camera',
-                  cb_value={'code': 'camera',
-                            'camera_ip': self.ip,
-                            'url': 'http://221.181.89.66:811',
-                            'ret': ret})
+        return {'code': 'camera',
+                'camera_ip': self.ip,
+                'url': 'http://221.181.89.66:811',
+                'ret': ret}
 
     def open_gate(self):
         logger.info('Open gate {}'.format(self.ip))
@@ -140,10 +137,11 @@ class Camera:
         logger.info(f'close connection to the camera {self.ip}')
         self.r.ICE_IPCSDK_Close(self.hSDK)
 
+
 if __name__ == '__main__':
     IP = ['10.170.0.230', '10.170.0.231']
     obj = []
 
     for index, ip in enumerate(IP):
-        obj[index]= Camera(ip)
+        obj[index] = Camera(ip)
         obj[index].connect_camera()

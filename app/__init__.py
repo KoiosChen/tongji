@@ -46,6 +46,7 @@ def create_app(config_name):
     db.app = app
     db.init_app(app)
     db.create_scoped_session()
+    socketio.init_app(app)
     pagedown.init_app(app)
     scheduler.init_app(app)
     scheduler.start()

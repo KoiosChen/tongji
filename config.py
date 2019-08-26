@@ -39,6 +39,7 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
+    DEBUG = False
     DB_USERNAME = os.environ.get('DATABASE_USERNAME') or 'peter'
     DB_PASSWORD = os.environ.get('DATABASE_PASSWORD') or 'ftp123buzhidao'
     DB_HOST = os.environ.get('DATABASE_HOST') or '127.0.0.1'

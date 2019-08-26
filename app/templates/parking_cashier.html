@@ -19,15 +19,17 @@
                     </div>
                 </div>
                 <div class="m-portlet__body">
-                    <img id="entry_pic" alt="parking_entry" width="95%"/>
+                    <img id="gate1_pic" alt="parking_entry" width="95%" src=""/>
                 </div>
                 <div class="m-portlet__foot">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            Portlet footer:
+                            <p id="gate1_name"></p>
+                            ip: <p id="gate1_ip"></p>
+                            方向: <p id="gate1_direction"></p>
                         </div>
                         <div class="col-lg-6 m--align-right">
-                            <button type="submit" class="btn btn-brand">
+                            <button type="submit" class="btn btn-brand" id="gate1_open">
                                 Open
                             </button>
                         </div>
@@ -49,15 +51,17 @@
                     </div>
                 </div>
                 <div class="m-portlet__body">
-                    <img id="entry_pic" alt="parking_entry" width="95%"/>
+                    <img id="gate2_pic" alt="parking_entry" width="95%"/>
                 </div>
                 <div class="m-portlet__foot">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            Portlet footer:
+                            <p id="gate1_name"></p>
+                            ip: <p id="gate2_ip"></p>
+                            方向: <p id="gate2_direction"></p>
                         </div>
                         <div class="col-lg-6 m--align-right">
-                            <button type="submit" class="btn btn-brand">
+                            <button type="submit" class="btn btn-brand" id="gate2_open">
                                 Open
                             </button>
                         </div>
@@ -82,15 +86,17 @@
                     </div>
                 </div>
                 <div class="m-portlet__body">
-                    <img id="entry_pic" alt="parking_entry" width="95%"/>
+                    <img id="gate3_pic" alt="parking_entry" width="95%"/>
                 </div>
                 <div class="m-portlet__foot">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            Portlet footer:
+                            <p id="gate1_name"></p>
+                            ip: <p id="gate3_ip"></p>
+                            方向: <p id="gate3_direction"></p>
                         </div>
                         <div class="col-lg-6 m--align-right">
-                            <button type="submit" class="btn btn-brand">
+                            <button type="submit" class="btn btn-brand" id="gate3_open">
                                 Open
                             </button>
                         </div>
@@ -112,15 +118,17 @@
                     </div>
                 </div>
                 <div class="m-portlet__body">
-                    <img id="entry_pic" alt="parking_entry" width="95%"/>
+                    <img id="gate4_pic" alt="parking_entry" width="95%"/>
                 </div>
                 <div class="m-portlet__foot">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            Portlet footer:
+                            <p id="gate1_name"></p>
+                            ip: <p id="gate4_ip"></p>
+                            方向: <p id="gate4_direction"></p>
                         </div>
                         <div class="col-lg-6 m--align-right">
-                            <button type="submit" class="btn btn-brand">
+                            <button type="submit" class="btn btn-brand" id="gate4_open">
                                 Open
                             </button>
                         </div>
@@ -139,52 +147,29 @@
         $(document).ready(function () {
             let socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
 
-            socket.on('connect', function () {
-                socket.emit('cashier check');
-            });
 
             socket.on('ws_test', function (msg) {
-                if (msg.status === 'true') {
-                    $('#entry_unit_price').text(msg.content.entry_unit_price);
-                    $('#entry_number_plate').text(msg.content.number_plate);
-                    $('#entry_time').text(msg.content.entry_time);
-                    $('#pay_fee').text(msg.content.fee);
-                    $('#parking_time').text(msg.content.totally_time);
-                    $('#entry_pic').attr('src', 'http://' + document.domain + '/' + msg.content.entry_pic);
-                    $('#entry_plate_number_pic').attr('src', 'http://' + document.domain + '/' + msg.content.entry_plate_number_pic);
-                    $('#parking_record_id').text(msg.content.parking_record_id)
-                }
-                $('#exit_number_plate').text(msg.content.number_plate);
-                $('#exit_time').text(msg.content.exit_time);
-                $('#exit_pic').attr('src', 'http://' + document.domain + '/' + msg.content.exit_pic);
-                $('#exit_number_plate_pic').attr('src', 'http://' + document.domain + '/' + msg.content.exit_plate_number_pic);
+                alert(msg.content.gate + "有车辆进出")
+                $('#' + msg.content.gate + '_pic').attr('src', msg.content.pic_path);
+                $('#' + msg.content.gate + '_name').text(msg.content.gate_name);
+                $('#' + msg.content.gate + '_ip').text(msg.content.camera_ip);
+                $('#' + msg.content.gate + '_direction').text(msg.content.camera_type);
             });
 
-            $('#paid').click(function () {
-                alert('button id paid is clicked');
-                let parking_record_id = $('#parking_record_id').text();
-                let pay_fee = $('#pay_fee').text();
-                if (parking_record_id && pay_fee) {
-                    alert('emit to paid opening');
-                    socket.emit('paid opening', {
-                        'parking_record_id': parking_record_id,
-                        'fee': pay_fee
-                    });
+            $('#gate1_open,#gate2_open, #gate3_open, #gate4_open').click(function () {
+                let gate_id = $(this).attr('id');
+                let gate = gate_id.split('_')[0];
+                let camera_ip = $('#' + gate + '_ip').text();
+                if (camera_ip) {
+                    socket.emit('open gate', {'camera_ip': camera_ip});
                 }
                 else {
-                    alert('无匹配车辆信息，不可点击')
+                    alert('无车辆')
                 }
-
             });
 
-            socket.on('paid result', function (result) {
-                if (result.status === 'true') {
-                    toastr.info(result.content);
-                    socket.emit('cashier check')
-                }
-                else {
-                    toastr.warning(result.content)
-                }
+            socket.on('open_result', function (result) {
+                alert(result.content)
             });
         });
     </script>

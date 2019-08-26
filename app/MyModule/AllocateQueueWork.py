@@ -1,6 +1,7 @@
 import threading
-from .. import logger, work_q, redis_db, p_msg_cb_func
+from .. import logger, work_q, redis_db, p_msg_cb_func, socketio
 import json
+from ..models import gate_dict
 import uuid
 from ..MyModule.HashContent import md5_content
 import os
@@ -13,9 +14,22 @@ class StartThread(threading.Thread):
 
     def run(self):
         while True:
-            camera_ip = self.queue.get()
-            print(camera_ip)
-            p_msg_cb_func[camera_ip].capture_pic()
+            capture_result = self.queue.get()
+            # capture_result fomart:
+            # {'code': 'camera',
+            #  'camera_ip': pcIP.value,
+            #  'url': 'http://221.181.89.66:811',
+            #  'ret': ret}
+            logger.debug(capture_result)
+            redis_db.set(capture_result['camera_ip'], json.dumps(capture_result))
+
+            camera_json = [{'gate':gk, 'camera_type': ck, 'camera_ip': cv} for gk, gv in gate_dict.items() for ck, cv in gv.items() if
+                             cv == capture_result['camera_ip']][0]
+            camera_json['pic_path'] = capture_result['url'] + '/' + capture_result['ret']['Remote file_id'].decode()
+            camera_json['gate_name'] = gate_dict[camera_json['gate']]['gate_name']
+
+            socketio.emit('ws_test', camera_json, namespace='/test')
+
             self.queue.task_done()
 
 
