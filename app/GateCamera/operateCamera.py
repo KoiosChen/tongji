@@ -62,7 +62,12 @@ class Camera:
         # ip = ''.join([i.decode() for i in pcIP.contents if i is not None])
 
         # work_q.put(ip)
-        pic = pvPicData.contents
+        print(pcIP)
+        print(pvPicData)
+        ip = pcIP.decode()
+        capture_result = {}
+        capture_result['camera_ip'] = ip
+        work_q.put(capture_result)
         # ret 格式：
         # {'Group name': b'group1',
         #  'Remote file_id': b'group1/M00/00/01/Cr4A-11iOj-AL4Q2ABAAALDtZcg754.jpg',
@@ -70,16 +75,16 @@ class Camera:
         #  'Local file name': './test_pic.jpg',
         #  'Uploaded size': '1.00MB',
         #  'Storage IP': b'10.190.0.251'}
-        ret = fdfs_client.upload_by_buffer(pic, file_ext_name='jpg')
-        logger.info(ret)
-        work_q.put({'code': 'camera',
-                    'camera_ip': pcIP.value,
-                    'url': 'http://221.181.89.66:811',
-                    'ret': ret})
+        # ret = fdfs_client.upload_by_buffer(pvPicData, file_ext_name='jpg')
+        # logger.info(ret)
+        # work_q.put({'code': 'camera',
+        #             'camera_ip': ip,
+        #             'url': 'http://221.181.89.66:811',
+        #             'ret': ret})
 
     def __init__(self, ip):
         self.ip = ip
-        self.r = cdll.LoadLibrary('/Users/Peter/python/tongji/app/static/ice_ipcsdk_lib/libice_ipcsdk.so')
+        self.r = cdll.LoadLibrary('/opt/tongji/app/static/ice_ipcsdk_lib/libice_ipcsdk.so')
 
         self.r.ICE_IPCSDK_Open.restype = POINTER(c_void_p)
         self.r.ICE_IPCSDK_GetStatus.restype = c_int
@@ -88,8 +93,8 @@ class Camera:
         self.r.ICE_IPCSDK_OpenGate.restype = c_int
 
     def connect_camera(self):
-        ICE_IPCSDK_Plate = CFUNCTYPE(c_void_p, c_void_p, POINTER(c_char_p), POINTER(c_char_p), POINTER(c_char_p),
-                                     POINTER(c_char * 1048576), c_long, c_void_p, c_long,
+        ICE_IPCSDK_Plate = CFUNCTYPE(c_void_p, c_void_p, c_char_p, c_char_p, c_char_p,
+                                     (c_char * 1048576), c_long, c_void_p, c_long,
                                      c_long, c_long, c_long, c_long,
                                      c_float, c_long,
                                      c_long, c_long, c_long, c_long,
@@ -108,7 +113,7 @@ class Camera:
         logger.info(f'set light param result>> {light_result}')
 
     def capture_pic(self):
-        pvPicData = (c_void_p * 1048576)()
+        pvPicData = (c_char * 1048576)()
         nPicSize = c_long(1048576)
         nPicLen = c_long(0)
 
@@ -118,11 +123,7 @@ class Camera:
 
         logger.debug(f'capture result>> {capture_result} len>> {nPicLen.value}')
 
-        with open('./test_pic.jpg', 'wb') as f:
-            f.write(pvPicData)
-
-        ret = fdfs_client.upload_by_filename('./test_pic.jpg')
-        os.remove('./test_pic.jpg')
+        ret = fdfs_client.upload_by_buffer(pvPicData, file_ext_name='jpg')
         logger.info(ret)
         return {'code': 'camera',
                 'camera_ip': self.ip,

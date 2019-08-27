@@ -6,7 +6,7 @@ from flask import request, jsonify
 
 def open(camera_ip):
     try:
-        assert True if redis_db.get('open_gate_func').decode() == '1' else False, 'open gate service stopped'
+        #assert True if redis_db.get('open_gate_func').decode() == '1' else False, 'open gate service stopped'
 
         if camera_ip in hSDK_handle.keys():
             hSDK_handle[camera_ip].open_gate()
