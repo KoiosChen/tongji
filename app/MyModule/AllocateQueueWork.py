@@ -5,6 +5,7 @@ from ..models import gate_dict
 import uuid
 from ..MyModule.HashContent import md5_content
 import os
+from ..GateCamera import operateCamera
 
 
 class StartThread(threading.Thread):
