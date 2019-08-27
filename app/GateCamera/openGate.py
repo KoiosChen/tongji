@@ -7,6 +7,7 @@ def open(camera_ip):
 
         if camera_ip in hSDK_handle.keys():
             hSDK_handle[camera_ip].open_gate()
+            redis_db.delete(camera_ip)
             return {'code': 'success', 'message': 'open gate command has been sent', 'data': ''}
         else:
             return {'code': 'fail', 'message': 'hSDK does not exist', 'data': ''}

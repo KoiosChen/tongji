@@ -1,8 +1,7 @@
 from ctypes import *
 from .. import init_logging, fdfs_client, p_msg_cb_func, work_q
 from .plate_struct_class import LightParam
-from ..MyModule.ResultCallBack import call_back
-import os
+from ..models import lib_so
 
 logger = init_logging.init()
 
@@ -14,87 +13,25 @@ class Camera:
                          nPlatePosTop, nPlatePosRight, nPltePosBottom,
                          fPlateConfidence, nVehicleColor, nPlateType, nVehicleDir, nAlarmType, nSpeed, nCapTime,
                          nVehicleType, nResultHigh, nResultLow):
-        """
-        作为ICE_IPCSDK_Open的回调函数
-        :pvParam = c_void_p()
-        :pcIP = (c_char * 48)()
-        :pcNumber = (c_char * 48)()
-        :pcColor = (c_char * 48)()
-        :pvPicData = (c_void_p * 1048576)()
-        :nPicLen = c_long()
-        :pvPlatePicData = (c_void_p * 1048576)()
-        :nPlatePicLen = c_long()
-        :nPlatePosLeft = c_long()
-        :nPlatePosTop = c_long()
-        :nPlatePosRight = c_long()
-        :nPlatePosBottom = c_long()
-        :fPlateConfidence = c_float()
-        :nVehicleColor = c_long()
-        :nPlateType = c_long()
-        :nVehicleDir = c_long()
-        :nAlarmType = c_long()
-        :nSpeed = c_long()
-        :nCapTime = c_long()
-        :nVehicleType = c_long()
-        :nResultHigh = c_long()
-        :nResultLow = c_long()
-        :return:
-        """
-        logger.debug('in ice ipcsdk plate callback function')
-
-        # if pcNumber:
-        #    logger.debug('plate number>> {}'.format(pcNumber.value))
-
-        # logger.debug('pic len>> ', nPicLen.value)
-
-        # with open('./test_pic.jpg', 'wb') as f:
-        #     f.write(pvPicData)
-        """
-        @return dict {
-        'Group name' : group_name,
-        'Remote file_id' : remote_file_id,
-        'Status' : 'Upload successed.',
-        'Local file name' : '',
-        'Uploaded size' : upload_size,
-        'Storage IP' : storage_ip
-        }
-        """
-        # ip = ''.join([i.decode() for i in pcIP.contents if i is not None])
-
-        # work_q.put(ip)
-        print(pcIP)
-        print(pvPicData)
-        ip = pcIP.decode()
-        capture_result = {}
-        capture_result['camera_ip'] = ip
-        work_q.put(capture_result)
-        # ret 格式：
-        # {'Group name': b'group1',
-        #  'Remote file_id': b'group1/M00/00/01/Cr4A-11iOj-AL4Q2ABAAALDtZcg754.jpg',
-        #  'Status': 'Upload successed.',
-        #  'Local file name': './test_pic.jpg',
-        #  'Uploaded size': '1.00MB',
-        #  'Storage IP': b'10.190.0.251'}
-        # ret = fdfs_client.upload_by_buffer(pvPicData, file_ext_name='jpg')
-        # logger.info(ret)
-        # work_q.put({'code': 'camera',
-        #             'camera_ip': ip,
-        #             'url': 'http://221.181.89.66:811',
-        #             'ret': ret})
+        logger.debug('It\'s now in ice_ipcsdk_plate callback function')
+        logger.debug('There is a car waiting at the camera {}'.format(pcIP.decode()))
+        work_q.put(pcIP.decode())
 
     def __init__(self, ip):
+        logger.debug(f'Initate {ip}')
         self.ip = ip
-        self.r = cdll.LoadLibrary('/opt/tongji/app/static/ice_ipcsdk_lib/libice_ipcsdk.so')
+        self.r = cdll.LoadLibrary(lib_so)
 
-        self.r.ICE_IPCSDK_Open.restype = POINTER(c_void_p)
+        self.r.ICE_IPCSDK_Open.restype = c_void_p
         self.r.ICE_IPCSDK_GetStatus.restype = c_int
         self.r.ICE_IPCSDK_SetLightParam.restype = c_int
         self.r.ICE_IPCSDK_Capture.restype = c_int
         self.r.ICE_IPCSDK_OpenGate.restype = c_int
 
     def connect_camera(self):
+        logger.debug('connecting camera {}'.format(self.ip))
         ICE_IPCSDK_Plate = CFUNCTYPE(c_void_p, c_void_p, c_char_p, c_char_p, c_char_p,
-                                     (c_char * 1048576), c_long, c_void_p, c_long,
+                                     c_void_p, c_long, c_void_p, c_long,
                                      c_long, c_long, c_long, c_long,
                                      c_float, c_long,
                                      c_long, c_long, c_long, c_long,
@@ -125,10 +62,7 @@ class Camera:
 
         ret = fdfs_client.upload_by_buffer(pvPicData, file_ext_name='jpg')
         logger.info(ret)
-        return {'code': 'camera',
-                'camera_ip': self.ip,
-                'url': 'http://221.181.89.66:811',
-                'ret': ret}
+        return ret
 
     def open_gate(self):
         logger.info('Open gate {}'.format(self.ip))
