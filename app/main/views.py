@@ -13,4 +13,4 @@ def index():
     :return:
     """
 
-    return render_template("/parking_gate_switch.html")
+    return render_template("parking_gate_switch.html")

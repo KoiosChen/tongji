@@ -26,19 +26,17 @@ def frame_analyze(host, data):
         r = binascii.b2a_hex(data).decode()
         if r[:4] == '55aa':
             d = r[6:-2]
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             for x in range(0, 4 * (int(r[4:6])), 4):
+                # 补全16位二进制
                 cb = '{:016b}'.format(int(d[0 + x:4 + x], 16))
-
-                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
                 s.sendto({host: {'direction': light_direction[cb[0:2]],
                                  'attribute': light_attribute[cb[2:5]],
                                  'flash': flash[cb[5:6]],
                                  'color': color[cb[6:8]],
                                  'counter': int(cb[8:], 2)}},
                          address)
-
-                s.close()
+            s.close()
     except Exception as e:
         logger.error(f'frame_analyze error {e}')
 

@@ -29,8 +29,8 @@ redis_db = redis.Redis(host='localhost', port=6379, db=3)
 
 logger = init_logging.init()
 
-fdfs_client = Fdfs_client('/etc/fdfs/client.conf')
-#fdfs_client = ''
+#fdfs_client = Fdfs_client('/etc/fdfs/client.conf')
+fdfs_client = ''
 
 hSDK_handle = {}
 
@@ -48,8 +48,6 @@ def create_app(config_name):
     db.create_scoped_session()
     socketio.init_app(app)
     pagedown.init_app(app)
-    scheduler.init_app(app)
-    scheduler.start()
 
 
     from .main import main as main_blueprint

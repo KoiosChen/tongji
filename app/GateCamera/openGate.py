@@ -8,10 +8,10 @@ def open(camera_ip):
         if camera_ip in hSDK_handle.keys():
             hSDK_handle[camera_ip].open_gate()
             redis_db.delete(camera_ip)
-            return {'code': 'success', 'message': 'open gate command has been sent', 'data': ''}
+            return {'code': 'success', 'message': '已发送开门指令', 'data': ''}
         else:
-            return {'code': 'fail', 'message': 'hSDK does not exist', 'data': ''}
+            return {'code': 'fail', 'message': '开门失败，无法连接摄像头', 'data': ''}
 
     except Exception as e:
         logger.error(e)
-        return {'code': 'fail', 'message': 'job put into queue fail for ' + str(e), 'data': ''}
+        return {'code': 'fail', 'message': '开门失败 ' + str(e), 'data': ''}

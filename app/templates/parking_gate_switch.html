@@ -147,16 +147,19 @@
         $(document).ready(function () {
             let socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
 
+            socket.on('test', function (msg) {
+                console.log(msg)
+            })
 
             socket.on('ws_test', function (msg) {
-                alert(msg.content.gate + "有车辆进出")
+                alert(msg.content.gate + "有车辆进出");
                 $('#' + msg.content.gate + '_pic').attr('src', msg.content.pic_path);
                 $('#' + msg.content.gate + '_name').text(msg.content.gate_name);
                 $('#' + msg.content.gate + '_ip').text(msg.content.camera_ip);
                 $('#' + msg.content.gate + '_direction').text(msg.content.camera_type);
             });
-
             $('#gate1_open,#gate2_open, #gate3_open, #gate4_open').click(function () {
+
                 let gate_id = $(this).attr('id');
                 let gate = gate_id.split('_')[0];
                 let camera_ip = $('#' + gate + '_ip').text();
@@ -164,12 +167,18 @@
                     socket.emit('open gate', {'camera_ip': camera_ip});
                 }
                 else {
-                    alert('无车辆')
+                    if (window.confirm("未识别到车辆，是否仍旧开闸?")) {
+                        alert('已开闸');
+                        socket.emit('open gate', {'gate': gate});
+                    }
+                    else {
+                        alert('无车辆')
+                    }
                 }
             });
 
             socket.on('open_result', function (result) {
-                alert(result.content)
+                alert(result.content.message)
             });
         });
     </script>
