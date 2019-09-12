@@ -11,16 +11,18 @@ def test_connect():
 
 @socketio.on('open gate', namespace='/test')
 def open_gate(data):
-    logger.info('open gate {}'.format(data.get('camera_ip')))
-    if 'camera_ip' in data.keys():
-        open_result = openGate.open(data.get('camera_ip'))
-    elif 'gate' in data.keys():
-        open_result = openGate.open(gate_dict[data.get('gate')]['camera_in'])
-    else:
-        open_result = '开启哪个闸道？'
-    socketio.emit('open_result', {'content': open_result}, namespace='/test')
-    gate_name = [k for k, v in gate_dict.items() for kk, vv in v.items() if vv == data.get('camera_ip')][0]
-    socketio.emit('wx test', {'gate': gate_name, 'camera_type': '', 'camera_ip': '', 'pic_path': '', 'gate_name': ''},
-                  namespace='/test')
+    camera_ip = data.get('camera_ip') if 'camera_ip' in data.keys() else gate_dict[data.get('gate')]['camera_in']
 
-    # socketio.emit('open_result', {'content': '{} open'.format(data.get('camera_ip'))}, namespace='/test')
+    logger.info('open gate {}'.format(camera_ip))
+    socketio.emit('open_result', {'content': openGate.open(camera_ip)}, namespace='/test')
+
+    gate_name = [k for k, v in gate_dict.items() for kk, vv in v.items() if vv == camera_ip][0]
+    socketio.emit('wx test',
+                  {'content':
+                       {'gate': gate_name,
+                        'camera_type': '',
+                        'camera_ip': '',
+                        'pic_path': '',
+                        'gate_name': ''}},
+                  namespace='/test')
+    redis_db.delete(camera_ip)

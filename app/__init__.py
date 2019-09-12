@@ -29,8 +29,10 @@ redis_db = redis.Redis(host='localhost', port=6379, db=3)
 
 logger = init_logging.init()
 
-#fdfs_client = Fdfs_client('/etc/fdfs/client.conf')
-fdfs_client = ''
+if os.path.exists('/etc/fdfs/client.conf'):
+    fdfs_client = Fdfs_client('/etc/fdfs/client.conf')
+else:
+    fdfs_client = ''
 
 hSDK_handle = {}
 
