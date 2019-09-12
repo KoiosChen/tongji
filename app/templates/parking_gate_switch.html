@@ -155,7 +155,9 @@
             });
 
             socket.on('ws_test', function (msg) {
-                alert(msg.content.gate + "有车辆进出");
+                if (msg.content.camera_ip) {
+                    alert(msg.content.gate + "有车辆进出");
+                }
                 $('#' + msg.content.gate + '_pic').attr('src', msg.content.pic_path);
                 $('#' + msg.content.gate + '_name').text(msg.content.gate_name);
                 $('#' + msg.content.gate + '_ip').text(msg.content.camera_ip);
@@ -178,7 +180,6 @@
             });
 
             $('#gate1_close').click(function () {
-
                 let gate_id = $(this).attr('id');
                 let gate = gate_id.split('_')[0];
                 let camera_ip = $('#' + gate + '_ip').text();
@@ -194,7 +195,7 @@
             });
 
             socket.on('close_result', function (result) {
-                alert(result.content)
+                alert(result.content.message)
             });
         });
     </script>
