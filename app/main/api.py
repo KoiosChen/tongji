@@ -3,7 +3,7 @@ from ..models import *
 from .. import logger, work_q, redis_db, hSDK_handle, socketio
 from . import main
 from ..decorators import permission_ip
-from ..GateCamera import openGate
+from ..GateCamera import Gate
 from ..MyModule import send_socketio
 
 
@@ -17,11 +17,12 @@ def open_gate():
     print(request.json)
     request_data = request.json['data']
 
-    return jsonify(openGate.open(request_data['ip']))
+    return jsonify(Gate.open(request_data['ip']))
 
 
 
 @main.route('/socket_test', methods=['POST'])
+@permission_ip(PermissionIP)
 def socket_test():
     """
     只允许PermissionIP中涉及的服务器访问
@@ -33,11 +34,13 @@ def socket_test():
 
 
 @main.route('/close_gate_api', methods=['POST'])
+@permission_ip(PermissionIP)
 def close_gate_api():
     """
     只允许PermissionIP中涉及的服务器访问
     :return:
     """
-    print("close gate")
+    camera_ip = request.json['camera_ip']
+    print("closing gate test ", camera_ip)
     socketio.emit('test', 'close gate test', namespace='/test')
-    return jsonify({'status': hSDK_handle['10.170.0.230'].close_gate()})
+    return jsonify({'status': Gate.close(camera_ip)})

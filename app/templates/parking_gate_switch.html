@@ -32,6 +32,9 @@
                             <button type="submit" class="btn btn-brand" id="gate1_open">
                                 Open
                             </button>
+                            <button type="submit" class="btn btn-brand" id="gate1_close">
+                                close
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -149,7 +152,7 @@
 
             socket.on('test', function (msg) {
                 console.log(msg)
-            })
+            });
 
             socket.on('ws_test', function (msg) {
                 alert(msg.content.gate + "有车辆进出");
@@ -171,13 +174,26 @@
                         alert('已开闸');
                         socket.emit('open gate', {'gate': gate});
                     }
-                    else {
-                        alert('无车辆')
+                }
+            });
+
+            $('#gate1_close').click(function () {
+
+                let gate_id = $(this).attr('id');
+                let gate = gate_id.split('_')[0];
+                let camera_ip = $('#' + gate + '_ip').text();
+                if (camera_ip) {
+                    socket.emit('close gate', {'camera_ip': camera_ip});
+                }
+                else {
+                    if (window.confirm("无车辆，是否确认关闸?")) {
+                        alert('已关闸');
+                        socket.emit('close gate', {'gate': gate});
                     }
                 }
             });
 
-            socket.on('open_result', function (result) {
+            socket.on('close_result', function (result) {
                 alert(result.content.message)
             });
         });

@@ -74,6 +74,7 @@ class Camera:
         logger.info("Close gate {}".format(self.ip))
         close_result = self.r.ICE_IPCSDK_ControlAlarmOut(self.hSDK, 1)
         print(close_result)
+        return close_result
 
     def close_connect(self):
         logger.info(f'close connection to the camera {self.ip}')
