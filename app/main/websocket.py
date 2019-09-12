@@ -21,34 +21,27 @@ def open_gate(data):
 
     logger.info('open gate {}'.format(camera_ip))
 
-    gate_name = [k for k, v in gate_dict.items() for kk, vv in v.items() if vv == camera_ip][0]
+    open_result = Gate.open(camera_ip)
 
-    socketio.emit('ws_test',
-                  {'content':
-                       {'gate': gate_name,
-                        'camera_type': '',
-                        'camera_ip': '',
-                        'pic_path': '',
-                        'gate_name': ''}},
-                  namespace='/test')
+    if open_result['code'] == 'success':
 
-    redis_db.delete(camera_ip)
+        gate_name = [k for k, v in gate_dict.items() for kk, vv in v.items() if vv == camera_ip][0]
+
+        socketio.emit('ws_test',
+                      {'content':
+                           {'gate': gate_name,
+                            'camera_type': '',
+                            'camera_ip': '',
+                            'pic_path': '',
+                            'gate_name': ''}},
+                      namespace='/test')
+    else:
+        socketio.emit('test', 'open gate fail', namespace='/test')
 
 
 @socketio.on('close gate', namespace='/test')
 def close_gate(data):
     camera_ip = data.get('camera_ip') if 'camera_ip' in data.keys() else gate_dict[data.get('gate')]['camera_in']
 
-    logger.info('close gate {}'.format(camera_ip))
+    logger.info('closing gate {}'.format(camera_ip))
     socketio.emit('close_result', {'content': Gate.close(camera_ip)}, namespace='/test')
-
-    gate_name = [k for k, v in gate_dict.items() for kk, vv in v.items() if vv == camera_ip][0]
-
-    socketio.emit('ws_test',
-                  {'content':
-                       {'gate': gate_name,
-                        'camera_type': '',
-                        'camera_ip': '',
-                        'pic_path': '',
-                        'gate_name': ''}},
-                  namespace='/test')
