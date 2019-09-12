@@ -32,8 +32,8 @@ def socket_test():
     return jsonify({'status': 'ok'})
 
 
-@main.route('/close_gate', methods=['POST'])
-def socket_test():
+@main.route('/close_gate_api', methods=['POST'])
+def close_gate_api():
     """
     只允许PermissionIP中涉及的服务器访问
     :return:
