@@ -169,6 +169,7 @@
                 let gate = gate_id.split('_')[0];
                 let camera_ip = $('#' + gate + '_ip').text();
                 if (camera_ip) {
+                    alert("已开闸")
                     socket.emit('open gate', {'camera_ip': camera_ip});
                 }
                 else {
@@ -188,7 +189,6 @@
                 }
                 else {
                     if (window.confirm("无车辆，是否确认关闸?")) {
-                        alert('已关闸');
                         socket.emit('close gate', {'gate': gate});
                     }
                 }
