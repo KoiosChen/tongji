@@ -7,7 +7,7 @@ def open(camera_ip):
 
         if camera_ip in hSDK_handle.keys():
             hSDK_handle[camera_ip].open_gate()
-            redis_db.delete(camera_ip)
+            redis_db.delete(camera_ip + '_camera')
             return {'code': 'success', 'message': '已发送开门指令', 'data': ''}
         else:
             return {'code': 'fail', 'message': '开门失败，无法连接摄像头', 'data': ''}
