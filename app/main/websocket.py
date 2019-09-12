@@ -1,4 +1,4 @@
-from .. import db, logger, socketio, redis_db
+from .. import logger, socketio, redis_db
 from ..GateCamera import openGate
 from ..models import gate_dict
 
