@@ -13,7 +13,8 @@ def test_connect():
         for key in all_keys:
             if re.search(r'camera', key.decode()):
                 value = json.loads(redis_db.get(key).decode())
-                socketio.emit('ws_test',  {'content': value}, namespace='/test')
+                socketio.emit('ws_test', {'content': value}, namespace='/test')
+
 
 @socketio.on('open gate', namespace='/test')
 def open_gate(data):

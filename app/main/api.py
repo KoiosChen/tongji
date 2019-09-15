@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from ..models import *
-from .. import logger, work_q, redis_db, hSDK_handle, socketio
+from .. import socketio
 from . import main
 from ..decorators import permission_ip
 from ..GateCamera import Gate
@@ -16,9 +16,7 @@ def open_gate():
     """
     print(request.json)
     request_data = request.json['data']
-
     return jsonify(Gate.open(request_data['ip']))
-
 
 
 @main.route('/socket_test', methods=['POST'])
@@ -28,8 +26,10 @@ def socket_test():
     只允许PermissionIP中涉及的服务器访问
     :return:
     """
+    ip = request.form.get('ip')
+    print(ip)
     socketio.emit('test', 'socket test', namespace='/test')
-    send_socketio.run('10.170.0.230')
+    send_socketio.run(ip)
     return jsonify({'status': 'ok'})
 
 

@@ -3,6 +3,7 @@ from .. import init_logging, fdfs_client, p_msg_cb_func, work_q
 from .plate_struct_class import LightParam
 from ..models import lib_so
 from ..MyModule import send_socketio
+import os
 
 logger = init_logging.init()
 
@@ -17,7 +18,8 @@ class Camera:
         logger.debug('It\'s now in ice_ipcsdk_plate callback function')
         logger.debug('There is a car waiting at the camera {}'.format(pcIP.decode()))
         # work_q.put(pcIP.decode())
-        send_socketio.run(pcIP.decode())
+        # send_socketio.run(pcIP.decode())
+        os.system('curl -d "ip=' + pcIP.decode() + '" -X POST http://127.0.0.1:12366/socket_test')
 
     def __init__(self, ip):
         logger.debug(f'Initate {ip}')

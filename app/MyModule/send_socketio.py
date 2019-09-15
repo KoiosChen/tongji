@@ -3,6 +3,7 @@ from app.models import img_url, gate_dict
 import json
 import time
 
+
 def run(camera_ip):
     camera_json = \
         [{'gate': gk, 'camera_type': ck, 'camera_ip': cv} for gk, gv in gate_dict.items() for ck, cv in gv.items() if

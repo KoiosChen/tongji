@@ -156,7 +156,7 @@
 
             socket.on('ws_test', function (msg) {
                 if (msg.content.camera_ip) {
-                    alert(msg.content.gate + "有车辆进出");
+                    alert(msg.content.gate_name + "有车辆进出");
                 }
                 $('#' + msg.content.gate + '_pic').attr('src', msg.content.pic_path);
                 $('#' + msg.content.gate + '_name').text(msg.content.gate_name);
@@ -169,13 +169,13 @@
                 let gate = gate_id.split('_')[0];
                 let camera_ip = $('#' + gate + '_ip').text();
                 if (camera_ip) {
-                    alert("已开闸")
                     socket.emit('open gate', {'camera_ip': camera_ip});
+                    alert("已开闸");
                 }
                 else {
                     if (window.confirm("未识别到车辆，是否仍旧开闸?")) {
-                        alert('已开闸');
                         socket.emit('open gate', {'gate': gate});
+                        alert('已开闸');
                     }
                 }
             });
