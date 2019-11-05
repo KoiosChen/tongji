@@ -79,7 +79,7 @@ class Camera:
         return close_result
 
     def close_connect(self):
-        logger.info(f'close connection to the camera {self.ip}')
+        logger.info(f'close_gate connection to the camera {self.ip}')
         self.r.ICE_IPCSDK_Close(self.hSDK)
 
 

@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'open-uri'
+require 'open_gate-uri'
 require 'json'
 require 'strscan'
 require 'forwardable'
@@ -44,6 +44,6 @@ class Converter
   def save_file(path, content, mode='w')
     dir = File.dirname(path)
     FileUtils.mkdir_p(dir) unless File.directory?(dir)
-    File.open(path, mode) { |file| file.write(content) }
+    File.open_gate(path, mode) { |file| file.write(content) }
   end
 end

@@ -2392,7 +2392,7 @@ Licensed under the MIT license.
                     }
 
                     if (!areaOpen) {
-                        // open area
+                        // open_gate area
                         ctx.beginPath();
                         ctx.moveTo(axisx.p2c(x1), axisy.p2c(bottom));
                         areaOpen = true;

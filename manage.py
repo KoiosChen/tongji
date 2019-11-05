@@ -30,6 +30,7 @@ for ip in IP:
         hSDK_handle[ip].connect_camera()
         logger.debug(hSDK_handle[ip].device_status)
 
+
 def make_shell_context():
     return dict(app=app, db=db)
 

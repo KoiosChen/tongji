@@ -1,3 +1,10 @@
 <component name="ProjectDictionaryState">
-  <dictionary name="Koios" />
+  <dictionary name="Koios">
+    <words>
+      <w>asctime</w>
+      <w>bufsize</w>
+      <w>hdlr</w>
+      <w>levelname</w>
+    </words>
+  </dictionary>
 </component>

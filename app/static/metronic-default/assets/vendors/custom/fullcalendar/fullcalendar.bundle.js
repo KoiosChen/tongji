@@ -998,7 +998,7 @@ var UnzonedRange = /** @class */ (function () {
     /*
     SIDEEFFECT: will mutate eventRanges.
     Will return a new array result.
-    Only works for non-open-ended ranges.
+    Only works for non-open_gate-ended ranges.
     */
     UnzonedRange.invertRanges = function (ranges, constraintRange) {
         var invertedRanges = [];
@@ -1027,7 +1027,7 @@ var UnzonedRange = /** @class */ (function () {
 }());
 exports.default = UnzonedRange;
 /*
-Only works for non-open-ended ranges.
+Only works for non-open_gate-ended ranges.
 */
 function compareUnzonedRanges(range1, range2) {
     return range1.startMs - range2.startMs; // earlier ranges go first
@@ -1601,7 +1601,7 @@ var ComponentFootprint = /** @class */ (function () {
         this.isAllDay = isAllDay;
     }
     /*
-    Only works for non-open-ended ranges.
+    Only works for non-open_gate-ended ranges.
     */
     ComponentFootprint.prototype.toLegacy = function (calendar) {
         return {
@@ -5591,7 +5591,7 @@ var DragListener = /** @class */ (function () {
         }
         this.listenTo(globalEmitter, {
             selectstart: util_1.preventDefault,
-            contextmenu: util_1.preventDefault // long taps would open menu on Chrome dev tools
+            contextmenu: util_1.preventDefault // long taps would open_gate menu on Chrome dev tools
         });
     };
     DragListener.prototype.unbindHandlers = function () {
@@ -7022,7 +7022,7 @@ var DayGrid = /** @class */ (function (_super) {
         var theme = view.calendar.theme;
         var title = this.getCellDate(row, col).format(this.opt('dayPopoverFormat'));
         var content = $('<div class="fc-header ' + theme.getClass('popoverHeader') + '">' +
-            '<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
+            '<span class="fc-close_gate ' + theme.getIconClass('close') + '"></span>' +
             '<span class="fc-title">' +
             util_1.htmlEscape(title) +
             '</span>' +
@@ -8030,7 +8030,7 @@ var Calendar = /** @class */ (function () {
         return zonedDate;
     };
     /*
-    Assumes the footprint is non-open-ended.
+    Assumes the footprint is non-open_gate-ended.
     */
     Calendar.prototype.footprintToDateProfile = function (componentFootprint, ignoreEnd) {
         var start = moment_ext_1.default.utc(componentFootprint.unzonedRange.startMs);
@@ -9975,7 +9975,7 @@ var DateProfileGenerator = /** @class */ (function () {
     // not responsible for trimming hidden days.
     DateProfileGenerator.prototype.buildValidRange = function () {
         return this._view.getUnzonedRangeOption('validRange', this._view.calendar.getNow()) ||
-            new UnzonedRange_1.default(); // completely open-ended
+            new UnzonedRange_1.default(); // completely open_gate-ended
     };
     // Builds a structure with info about the "current" range, the range that is
     // highlighted as being the current month for example.
@@ -10258,7 +10258,7 @@ var ExternalDropping = /** @class */ (function (_super) {
     // returns the zoned start/end dates for the event that would result from the hypothetical drop. end might be null.
     // Returning a null value signals an invalid drop hit.
     // DOES NOT consider overlap/constraint.
-    // Assumes both footprints are non-open-ended.
+    // Assumes both footprints are non-open_gate-ended.
     ExternalDropping.prototype.computeExternalDrop = function (componentFootprint, meta) {
         var calendar = this.view.calendar;
         var start = moment_ext_1.default.utc(componentFootprint.unzonedRange.startMs).stripZone();
@@ -10927,7 +10927,7 @@ var DateSelecting = /** @class */ (function (_super) {
     };
     // Given two spans, must return the combination of the two.
     // TODO: do this separation of concerns (combining VS validation) for event dnd/resize too.
-    // Assumes both footprints are non-open-ended.
+    // Assumes both footprints are non-open_gate-ended.
     DateSelecting.prototype.computeSelectionFootprint = function (footprint0, footprint1) {
         var ms = [
             footprint0.unzonedRange.startMs,
@@ -13963,8 +13963,8 @@ var Popover = /** @class */ (function () {
         })
             .append(options.content)
             .appendTo(options.parentEl);
-        // when a click happens on anything inside with a 'fc-close' className, hide the popover
-        this.el.on('click', '.fc-close', function () {
+        // when a click happens on anything inside with a 'fc-close_gate' className, hide the popover
+        this.el.on('click', '.fc-close_gate', function () {
             _this.hide();
         });
         if (options.autoHide) {

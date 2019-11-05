@@ -116,8 +116,8 @@ var amChartsStockChartsDemo = function() {
                     "compareGraphBalloonText": "[[title]]:<b>[[value]]</b>"
                 }],
                 "stockLegend": {
-                    "periodValueTextComparing": "[[percents.value.close]]%",
-                    "periodValueTextRegular": "[[value.close]]"
+                    "periodValueTextComparing": "[[percents.value.close_gate]]%",
+                    "periodValueTextRegular": "[[value.close_gate]]"
                 }
             }, {
                 "title": "Volume",
@@ -129,7 +129,7 @@ var amChartsStockChartsDemo = function() {
                     "fillAlphas": 1
                 }],
                 "stockLegend": {
-                    "periodValueTextRegular": "[[value.close]]"
+                    "periodValueTextRegular": "[[value.close_gate]]"
                 }
             }],
 
@@ -692,7 +692,7 @@ var amChartsStockChartsDemo = function() {
 
                     "stockLegend": {
                         "valueTextRegular": undefined,
-                        "periodValueTextComparing": "[[percents.value.close]]%"
+                        "periodValueTextComparing": "[[percents.value.close_gate]]%"
                     }
                 },
 
@@ -720,7 +720,7 @@ var amChartsStockChartsDemo = function() {
                         "markerType": "none",
                         "markerSize": 0,
                         "labelText": "",
-                        "periodValueTextRegular": "[[value.close]]"
+                        "periodValueTextRegular": "[[value.close_gate]]"
                     }
                 }
             ],

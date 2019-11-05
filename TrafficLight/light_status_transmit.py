@@ -5,10 +5,26 @@ import sys
 from gevent import socket, select
 import queue
 import threading
-from app import init_logging
+import logging
+import json
+
+
+def log_init():
+    # logging 配置
+    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S')
+    logger = logging.getLogger()
+    hdlr = logging.FileHandler("log.txt")
+    formatter = logging.Formatter(fmt='%(asctime)s - %(module)s-%(funcName)s - %(levelname)s - %(message)s',
+                                  datefmt='%m/%d/%Y %H:%M:%S')
+    hdlr.setFormatter(formatter)
+    logger.addHandler(hdlr)
+    logger.setLevel(logging.DEBUG)
+
+    return logger
+
 
 # logging 配置
-logger = init_logging.init()
+logger = log_init()
 
 # 帧结构
 color = {'00': 'black', '01': 'green', '10': 'yellow', '11': 'red'}
@@ -18,7 +34,7 @@ light_attribute = {'000': 'permit through', '001': 'turn left', '010': 'go strai
                    '100': 'pedestrian cross the street once', '101': 'pedestrian cross the street twice'}
 
 # 目标java udp socket
-address = ('127.0.0.1', 31500)
+address = ('192.168.42.10', 1221)
 
 
 def frame_analyze(host, data):
@@ -30,12 +46,13 @@ def frame_analyze(host, data):
             for x in range(0, 4 * (int(r[4:6])), 4):
                 # 补全16位二进制
                 cb = '{:016b}'.format(int(d[0 + x:4 + x], 16))
-                s.sendto({host: {'direction': light_direction[cb[0:2]],
-                                 'attribute': light_attribute[cb[2:5]],
-                                 'flash': flash[cb[5:6]],
-                                 'color': color[cb[6:8]],
-                                 'counter': int(cb[8:], 2)}},
-                         address)
+                send_content = {host: {'direction': light_direction[cb[0:2]],
+                                       'attribute': light_attribute[cb[2:5]],
+                                       'flash': flash[cb[5:6]],
+                                       'color': color[cb[6:8]],
+                                       'counter': int(cb[8:], 2)}}
+                s.connect(address)
+                s.send(json.dumps(send_content).encode())
             s.close()
     except Exception as e:
         logger.error(f'frame_analyze error {e}')

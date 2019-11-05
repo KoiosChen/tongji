@@ -29,7 +29,7 @@ Supports cross-domain, chunked and resumable file uploads and client-side image 
 * **Preview images, audio and video:**  
   A preview of image, audio and video files can be displayed before uploading with browsers supporting the required APIs.
 * **No browser plugins (e.g. Adobe Flash) required:**  
-  The implementation is based on open standards like HTML5 and JavaScript and requires no additional browser plugins.
+  The implementation is based on open_gate standards like HTML5 and JavaScript and requires no additional browser plugins.
 * **Graceful fallback for legacy browsers:**  
   Uploads files via XMLHttpRequests if supported and uses iframes as fallback for legacy browsers.
 * **HTML file upload form fallback:**  

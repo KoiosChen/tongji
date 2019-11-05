@@ -68,7 +68,7 @@ var Treeview = function () {
                             "text": "custom icon",
                             "icon": "fa fa-warning m--font-danger"
                         }, {
-                            "text": "initially open",
+                            "text": "initially open_gate",
                             "icon" : "fa fa-folder m--font-default",
                             "state": {
                                 "opened": true
@@ -118,7 +118,7 @@ var Treeview = function () {
                             "text": "Custom Icon",
                             "icon": "fa fa-warning m--font-danger"
                         }, {
-                            "text": "Initially open",
+                            "text": "Initially open_gate",
                             "icon" : "fa fa-folder m--font-success",
                             "state": {
                                 "opened": true
@@ -182,7 +182,7 @@ var Treeview = function () {
                             "text": "Custom Icon",
                             "icon": "fa fa-warning m--font-danger"
                         }, {
-                            "text": "Initially open",
+                            "text": "Initially open_gate",
                             "icon" : "fa fa-folder m--font-success",
                             "state": {
                                 "opened": true

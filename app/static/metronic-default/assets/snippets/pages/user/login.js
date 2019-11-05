@@ -5,7 +5,7 @@ var SnippetLogin = function() {
 
     var showErrorMsg = function(form, type, msg) {
         var alert = $('<div class="m-alert m-alert--outline alert alert-' + type + ' alert-dismissible" role="alert">\
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>\
+			<button type="button" class="close_gate" data-dismiss="alert" aria-label="Close"></button>\
 			<span></span>\
 		</div>');
 

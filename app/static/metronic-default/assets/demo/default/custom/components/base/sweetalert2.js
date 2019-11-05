@@ -117,7 +117,7 @@ var SweetAlert2Demo = function() {
                         'success'
                     )
                     // result.dismiss can be 'cancel', 'overlay',
-                    // 'close', and 'timer'
+                    // 'close_gate', and 'timer'
                 } else if (result.dismiss === 'cancel') {
                     swal(
                         'Cancelled',
@@ -142,8 +142,8 @@ var SweetAlert2Demo = function() {
 
         $('#m_sweetalert_demo_11').click(function(e) {
             swal({
-                title: 'Auto close alert!',
-                text: 'I will close in 5 seconds.',
+                title: 'Auto close_gate alert!',
+                text: 'I will close_gate in 5 seconds.',
                 timer: 5000,
                 onOpen: function() {
                     swal.showLoading()

@@ -16,7 +16,19 @@ def open_gate():
     """
     print(request.json)
     request_data = request.json['data']
-    return jsonify(Gate.open(request_data['ip']))
+    return jsonify(Gate.open_gate(request_data['ip']))
+
+
+@main.route('/close_gate', methods=['POST'])
+@permission_ip(PermissionIP)
+def close_gate():
+    """
+    只允许PermissionIP中涉及的服务器访问
+    :return:
+    """
+    print(request.json)
+    request_data = request.json['data']
+    return jsonify(Gate.close_gate(request_data['ip']))
 
 
 @main.route('/socket_test', methods=['POST'])
@@ -42,5 +54,5 @@ def close_gate_api():
     """
     camera_ip = request.json['camera_ip']
     print("closing gate test ", camera_ip)
-    socketio.emit('test', 'close gate test', namespace='/test')
-    return jsonify({'status': Gate.close(camera_ip)})
+    socketio.emit('test', 'close_gate gate test', namespace='/test')
+    return jsonify({'status': Gate.close_gate(camera_ip)})

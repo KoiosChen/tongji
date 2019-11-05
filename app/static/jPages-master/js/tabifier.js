@@ -175,7 +175,7 @@ var lineBefore = new RegExp('^<(/?' + ownLine.join('|/?') + '|' + contOwnLine.jo
 //line will go after these tags
 lineAfter = new RegExp('^<(br|/?' + ownLine.join('|/?') + '|/' + contOwnLine.join('|/') + ')[ >]');
 
-//inside these tags (close tag expected) a new indentation level is created
+//inside these tags (close_gate tag expected) a new indentation level is created
 var newLevel = ['blockquote', 'div', 'dl', 'fieldset', 'form', 'frameset', 'map', 'ol', 'p', 'pre', 'select', 'td', 'th', 'tr', 'ul'];
 newLevel = new RegExp('^</?(' + newLevel.join('|') + ')[ >]');
 

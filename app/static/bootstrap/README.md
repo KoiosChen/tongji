@@ -188,7 +188,7 @@ Days of the week that should be disabled. Values are 0 (Sunday) to 6 (Saturday).
 
 Boolean.  Default: false
 
-Whether or not to close the datetimepicker immediately when a date is selected.
+Whether or not to close_gate the datetimepicker immediately when a date is selected.
 
 ### startView
 

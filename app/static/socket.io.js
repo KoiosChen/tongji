@@ -768,7 +768,7 @@
             }).on("error", function (t) {
                 e.onError(t)
             }).on("close", function () {
-                e.onClose("transport close")
+                e.onClose("transport close_gate")
             })
         }, r.prototype.probe = function (t) {
             function e() {
@@ -822,7 +822,7 @@
             var u = this.createTransport(t, {probe: 1}), h = !1, f = this;
             r.priorWebsocketSuccess = !1, u.once("open", e), u.once("error", o), u.once("close", i), this.once("close", s), this.once("upgrading", c), u.open()
         }, r.prototype.onOpen = function () {
-            if (a("socket open"), this.readyState = "open", r.priorWebsocketSuccess = "websocket" === this.transport.name, this.emit("open"), this.flush(), "open" === this.readyState && this.upgrade && this.transport.pause) {
+            if (a("socket open_gate"), this.readyState = "open", r.priorWebsocketSuccess = "websocket" === this.transport.name, this.emit("open"), this.flush(), "open" === this.readyState && this.upgrade && this.transport.pause) {
                 a("starting upgrade probes");
                 for (var t = 0, e = this.upgrades.length; t < e; t++) this.probe(this.upgrades[t])
             }
@@ -873,7 +873,7 @@
             }
         }, r.prototype.close = function () {
             function t() {
-                r.onClose("forced close"), a("socket closing - telling transport to close"), r.transport.close()
+                r.onClose("forced close_gate"), a("socket closing - telling transport to close_gate"), r.transport.close()
             }
 
             function e() {
@@ -896,7 +896,7 @@
             a("socket error %j", t), r.priorWebsocketSuccess = !1, this.emit("error", t), this.onClose("transport error", t)
         }, r.prototype.onClose = function (t, e) {
             if ("opening" === this.readyState || "open" === this.readyState || "closing" === this.readyState) {
-                a('socket close with reason: "%s"', t);
+                a('socket close_gate with reason: "%s"', t);
                 var n = this;
                 clearTimeout(this.pingIntervalTimer), clearTimeout(this.pingTimeoutTimer), this.transport.removeAllListeners("close"), this.transport.close(), this.transport.removeAllListeners(), this.readyState = "closed", this.id = null, this.emit("close", t, e), n.writeBuffer = [], n.prevBufferLen = 0
             }
@@ -982,7 +982,7 @@
             t.pfx = this.pfx, t.key = this.key, t.passphrase = this.passphrase, t.cert = this.cert, t.ca = this.ca, t.ciphers = this.ciphers, t.rejectUnauthorized = this.rejectUnauthorized;
             var e = this.xhr = new a(t), n = this;
             try {
-                h("xhr open %s: %s", this.method, this.uri), e.open(this.method, this.uri, this.async);
+                h("xhr open_gate %s: %s", this.method, this.uri), e.open(this.method, this.uri, this.async);
                 try {
                     if (this.extraHeaders) {
                         e.setDisableHeaderCheck && e.setDisableHeaderCheck(!0);
@@ -1092,11 +1092,11 @@
             s.decodePayload(t, this.socket.binaryType, n), "closed" !== this.readyState && (this.polling = !1, this.emit("pollComplete"), "open" === this.readyState ? this.poll() : p('ignoring poll - transport state "%s"', this.readyState))
         }, r.prototype.doClose = function () {
             function t() {
-                p("writing close packet"), e.write([{type: "close"}])
+                p("writing close_gate packet"), e.write([{type: "close"}])
             }
 
             var e = this;
-            "open" === this.readyState ? (p("transport open - closing"), t()) : (p("transport not open - deferring close"), this.once("open", t))
+            "open" === this.readyState ? (p("transport open_gate - closing"), t()) : (p("transport not open_gate - deferring close_gate"), this.once("open", t))
         }, r.prototype.write = function (t) {
             var e = this;
             this.writable = !1;
@@ -1126,7 +1126,7 @@
         }, r.prototype.close = function () {
             return "opening" !== this.readyState && "open" !== this.readyState || (this.doClose(), this.onClose()), this
         }, r.prototype.send = function (t) {
-            if ("open" !== this.readyState) throw new Error("Transport not open");
+            if ("open" !== this.readyState) throw new Error("Transport not open_gate");
             this.write(t)
         }, r.prototype.onOpen = function () {
             this.readyState = "open", this.writable = !0, this.emit("open")
@@ -1760,12 +1760,12 @@
         }, r.prototype.packet = function (t) {
             t.nsp = this.nsp, this.io.packet(t)
         }, r.prototype.onopen = function () {
-            if (u("transport is open - connecting"), "/" !== this.nsp) if (this.query) {
+            if (u("transport is open_gate - connecting"), "/" !== this.nsp) if (this.query) {
                 var t = "object" === o(this.query) ? h.encode(this.query) : this.query;
                 u("sending connect packet with query %s", t), this.packet({type: i.CONNECT, query: t})
             } else this.packet({type: i.CONNECT})
         }, r.prototype.onclose = function (t) {
-            u("close (%s)", t), this.connected = !1, this.disconnected = !0, delete this.id, this.emit("disconnect", t)
+            u("close_gate (%s)", t), this.connected = !1, this.disconnected = !0, delete this.id, this.emit("disconnect", t)
         }, r.prototype.onpacket = function (t) {
             var e = t.nsp === this.nsp, n = t.type === i.ERROR && "/" === t.nsp;
             if (e || n) switch (t.type) {

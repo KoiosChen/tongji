@@ -40,7 +40,7 @@ test('simple keyboard nav test', function(){
     datesEqual(this.dp.date, UTCDate(2012, 1, 12));
     datesEqual(this.dp.viewDate, UTCDate(2012, 1, 12));
 
-    // Focus/open
+    // Focus/open_gate
     this.addon.click();
 
     // Navigation: -1 day, left arrow key

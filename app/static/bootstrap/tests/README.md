@@ -4,7 +4,7 @@ bugs when adding new features and making changes.
 
 # Running the tests
 
-The simplest way to run the tests is to open `tests/tests.html` in your browser.
+The simplest way to run the tests is to open_gate `tests/tests.html` in your browser.
 The test suites will automatically run themselves and present their results.
 
 To run the tests from the command line, download and install

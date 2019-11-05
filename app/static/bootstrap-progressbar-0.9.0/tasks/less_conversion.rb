@@ -16,7 +16,7 @@ class Converter
     RULE_OPEN_BRACE_RE          = /(?<![@#\$])\{/
     # same as the one above, but in reverse (on a reversed string)
     RULE_OPEN_BRACE_RE_REVERSE  = /\{(?![@#\$])/
-    # match closed brace, except when \w precedes }, or when }[.'"]. a heurestic to exclude } that are not selector body close }
+    # match closed brace, except when \w precedes }, or when }[.'"]. a heurestic to exclude } that are not selector body close_gate }
     RULE_CLOSE_BRACE_RE         = /(?<!\w)\}(?![.'"])/
     RULE_CLOSE_BRACE_RE_REVERSE = /(?<![.'"])\}(?!\w)/
     # match any brace that opens or closes a properties body
@@ -112,8 +112,8 @@ class Converter
               // [converter] This is because some asset helpers, such as Sprockets, do not work with file-relative paths.
               \\1: if($bootstrap-sass-asset-helper, "bootstrap/", "\\2bootstrap/") \\3;
             SCSS
-          when 'close.less'
-            # extract .close { button& {...} } rule
+          when 'close_gate.less'
+            # extract .close_gate { button& {...} } rule
             file = extract_nested_rule file, 'button&'
           when 'dropdowns.less'
             file = replace_all file, /@extend \.dropdown-menu-right;/, 'right: 0; left: auto;'
