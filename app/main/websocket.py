@@ -16,13 +16,13 @@ def test_connect():
                 socketio.emit('ws_test', {'content': value}, namespace='/test')
 
 
-@socketio.on('open_gate gate', namespace='/test')
+@socketio.on('open gate', namespace='/test')
 def open_gate(data):
     camera_ip = data.get('camera_ip') if 'camera_ip' in data.keys() else gate_dict[data.get('gate')]['camera_in']
 
     logger.info('open_gate gate {}'.format(camera_ip))
 
-    open_result = Gate.open_gate(camera_ip)
+    open_result = Gate.open_it(camera_ip)
 
     if open_result['code'] == 'success':
 
@@ -40,9 +40,9 @@ def open_gate(data):
         socketio.emit('test', 'open_gate gate fail', namespace='/test')
 
 
-@socketio.on('close_gate gate', namespace='/test')
+@socketio.on('close gate', namespace='/test')
 def close_gate(data):
     camera_ip = data.get('camera_ip') if 'camera_ip' in data.keys() else gate_dict[data.get('gate')]['camera_in']
 
     logger.info('closing gate {}'.format(camera_ip))
-    socketio.emit('close_result', {'content': Gate.close_gate(camera_ip)}, namespace='/test')
+    socketio.emit('close_result', {'content': Gate.close_it(camera_ip)}, namespace='/test')

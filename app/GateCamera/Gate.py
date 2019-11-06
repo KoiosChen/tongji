@@ -1,7 +1,7 @@
 from .. import redis_db, logger, hSDK_handle
 
 
-def open_gate(camera_ip):
+def open_it(camera_ip):
     try:
         # assert True if redis_db.get('open_gate_func').decode() == '1' else False, 'open_gate gate service stopped'
 
@@ -17,7 +17,7 @@ def open_gate(camera_ip):
         return {'code': 'fail', 'message': f'open_gate gate {camera_ip} fail for ' + str(e), 'data': ''}
 
 
-def close_gate(camera_ip):
+def close_it(camera_ip):
     try:
         if camera_ip in hSDK_handle.keys():
             close_result = hSDK_handle[camera_ip].close_gate()

@@ -14,10 +14,15 @@ def run(camera_ip):
     except:
         ret = {}
         ret['Remote file_id'] = 'group1/M00/00/0D/Cr4A-1104feAbD6fABAAAHPcgn8619.jpg'.encode()
+
     camera_json['pic_path'] = img_url + '/' + ret['Remote file_id'].decode()
     camera_json['gate_name'] = gate_dict[camera_json['gate']]['gate_name']
+
+    # write to redis as a cache
     redis_db.set(camera_ip + '_camera', json.dumps(camera_json))
     redis_db.expire(camera_ip + '_camera', 600)
+
+    # send websocket to web
     socketio.emit('ws_test', {'content': camera_json}, namespace='/test')
     socketio.emit('test', {'content': 'send msg'}, namespace='/test')
 

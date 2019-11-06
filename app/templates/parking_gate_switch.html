@@ -33,7 +33,7 @@
                                 Open
                             </button>
                             <button type="submit" class="btn btn-brand" id="gate1_close">
-                                close_gate
+                                Close
                             </button>
                         </div>
                     </div>
@@ -169,12 +169,12 @@
                 let gate = gate_id.split('_')[0];
                 let camera_ip = $('#' + gate + '_ip').text();
                 if (camera_ip) {
-                    socket.emit('open_gate gate', {'camera_ip': camera_ip});
+                    socket.emit('open gate', {'camera_ip': camera_ip});
                     alert("已开闸");
                 }
                 else {
                     if (window.confirm("未识别到车辆，是否仍旧开闸?")) {
-                        socket.emit('open_gate gate', {'gate': gate});
+                        socket.emit('open gate', {'gate': gate});
                         alert('已开闸');
                     }
                 }
@@ -185,11 +185,11 @@
                 let gate = gate_id.split('_')[0];
                 let camera_ip = $('#' + gate + '_ip').text();
                 if (camera_ip) {
-                    socket.emit('close_gate gate', {'camera_ip': camera_ip});
+                    socket.emit('close gate', {'camera_ip': camera_ip});
                 }
                 else {
                     if (window.confirm("无车辆，是否确认关闸?")) {
-                        socket.emit('close_gate gate', {'gate': gate});
+                        socket.emit('close gate', {'gate': gate});
                     }
                 }
             });
