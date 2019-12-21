@@ -13,7 +13,7 @@
 													<i class="flaticon-map-location"></i>
 												</span>
                             <h3 class="m-portlet__head-text">
-                                西区门1
+                                教学楼门口道闸
                             </h3>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                                 Open
                             </button>
                             <button type="submit" class="btn btn-brand" id="gate1_close">
-                                Close
+                                close
                             </button>
                         </div>
                     </div>
@@ -48,7 +48,7 @@
 													<i class="flaticon-map-location"></i>
 												</span>
                             <h3 class="m-portlet__head-text">
-                                西区门2
+                                东区桥头道闸
                             </h3>
                         </div>
                     </div>
@@ -59,13 +59,16 @@
                 <div class="m-portlet__foot">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            <p id="gate1_name"></p>
+                            <p id="gate2_name"></p>
                             ip: <p id="gate2_ip"></p>
                             方向: <p id="gate2_direction"></p>
                         </div>
                         <div class="col-lg-6 m--align-right">
                             <button type="submit" class="btn btn-brand" id="gate2_open">
                                 Open
+                            </button>
+                            <button type="submit" class="btn btn-brand" id="gate2_close">
+                                close
                             </button>
                         </div>
                     </div>
@@ -83,7 +86,7 @@
 													<i class="flaticon-map-location"></i>
 												</span>
                             <h3 class="m-portlet__head-text">
-                                西区门3
+                                东区东门道闸
                             </h3>
                         </div>
                     </div>
@@ -94,13 +97,16 @@
                 <div class="m-portlet__foot">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            <p id="gate1_name"></p>
+                            <p id="gate3_name"></p>
                             ip: <p id="gate3_ip"></p>
                             方向: <p id="gate3_direction"></p>
                         </div>
                         <div class="col-lg-6 m--align-right">
                             <button type="submit" class="btn btn-brand" id="gate3_open">
                                 Open
+                            </button>
+                            <button type="submit" class="btn btn-brand" id="gate3_close">
+                                close
                             </button>
                         </div>
                     </div>
@@ -115,7 +121,7 @@
 													<i class="flaticon-map-location"></i>
 												</span>
                             <h3 class="m-portlet__head-text">
-                                西区门4
+                                东区西门道闸
                             </h3>
                         </div>
                     </div>
@@ -126,13 +132,16 @@
                 <div class="m-portlet__foot">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            <p id="gate1_name"></p>
+                            <p id="gate4_name"></p>
                             ip: <p id="gate4_ip"></p>
                             方向: <p id="gate4_direction"></p>
                         </div>
                         <div class="col-lg-6 m--align-right">
                             <button type="submit" class="btn btn-brand" id="gate4_open">
                                 Open
+                            </button>
+                            <button type="submit" class="btn btn-brand" id="gate4_close">
+                                close
                             </button>
                         </div>
                     </div>
@@ -156,7 +165,7 @@
 
             socket.on('ws_test', function (msg) {
                 if (msg.content.camera_ip) {
-                    alert(msg.content.gate_name + "有车辆进出");
+                    alert(msg.content.gate + "有车辆进出");
                 }
                 $('#' + msg.content.gate + '_pic').attr('src', msg.content.pic_path);
                 $('#' + msg.content.gate + '_name').text(msg.content.gate_name);
@@ -171,8 +180,7 @@
                 if (camera_ip) {
                     socket.emit('open gate', {'camera_ip': camera_ip});
                     alert("已开闸");
-                }
-                else {
+                } else {
                     if (window.confirm("未识别到车辆，是否仍旧开闸?")) {
                         socket.emit('open gate', {'gate': gate});
                         alert('已开闸');
@@ -180,14 +188,13 @@
                 }
             });
 
-            $('#gate1_close').click(function () {
+            $('#gate1_close, #gate2_close, #gate3_close, #gate4_close').click(function () {
                 let gate_id = $(this).attr('id');
                 let gate = gate_id.split('_')[0];
                 let camera_ip = $('#' + gate + '_ip').text();
                 if (camera_ip) {
                     socket.emit('close gate', {'camera_ip': camera_ip});
-                }
-                else {
+                } else {
                     if (window.confirm("无车辆，是否确认关闸?")) {
                         socket.emit('close gate', {'gate': gate});
                     }

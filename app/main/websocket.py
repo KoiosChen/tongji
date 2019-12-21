@@ -7,12 +7,12 @@ import json
 
 @socketio.on('connect', namespace='/test')
 def test_connect():
-    print('connect')
+    logger.debug('>>> web socket connected')
     all_keys = redis_db.keys()
     if all_keys:
         for key in all_keys:
             if re.search(r'camera', key.decode()):
-                value = json.loads(redis_db.get(key).decode())
+                value = json.loads(redis_db.get(key))
                 socketio.emit('ws_test', {'content': value}, namespace='/test')
 
 
@@ -22,22 +22,15 @@ def open_gate(data):
 
     logger.info('open_gate gate {}'.format(camera_ip))
 
-    open_result = Gate.open_it(camera_ip)
-
-    if open_result['code'] == 'success':
-
-        gate_name = [k for k, v in gate_dict.items() for kk, vv in v.items() if vv == camera_ip][0]
-
-        socketio.emit('ws_test',
-                      {'content':
-                           {'gate': gate_name,
-                            'camera_type': '',
-                            'camera_ip': '',
-                            'pic_path': '',
-                            'gate_name': ''}},
-                      namespace='/test')
-    else:
-        socketio.emit('test', 'open_gate gate fail', namespace='/test')
+    socketio.emit('ws_test',
+                  {'content': {'gate': [k for k, v in gate_dict.items() for kk, vv in v.items() if vv == camera_ip][0],
+                               'camera_type': '',
+                               'camera_ip': '',
+                               'pic_path': '',
+                               'gate_name': ''}},
+                  namespace='/test') \
+        if Gate.open_it(camera_ip).get('code') == 'success' \
+        else socketio.emit('test', 'open_gate gate fail', namespace='/test')
 
 
 @socketio.on('close gate', namespace='/test')

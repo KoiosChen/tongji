@@ -25,7 +25,7 @@ work_q = queue.Queue(maxsize=1000)
 callback_q = queue.Queue(maxsize=1000)
 
 # 用于存放建议书订单， 需要配置持久化
-redis_db = redis.Redis(host='localhost', port=6379, db=3)
+redis_db = redis.Redis(host='localhost', port=6379, db=3, decode_responses=True)
 
 logger = init_logging.init()
 
@@ -34,9 +34,10 @@ if os.path.exists('/etc/fdfs/client.conf'):
 else:
     fdfs_client = ''
 
-hSDK_handle = {}
+global_ptz = dict()
+hSDK_handle = dict()
+p_msg_cb_func = dict()
 
-p_msg_cb_func = {}
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -50,7 +51,6 @@ def create_app(config_name):
     db.create_scoped_session()
     socketio.init_app(app)
     pagedown.init_app(app)
-
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)

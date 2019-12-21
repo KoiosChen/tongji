@@ -39,9 +39,9 @@ def run(camera_ip):
     headers = {'Content-Type': 'application/json', "encoding": "utf-8"}
     try:
         r = requests.post(api_url,
-                          data=json.dumps({'data': camera_json}, ensure_ascii=False).encode('utf-8'),
+                          data=json.dumps(camera_json, ensure_ascii=False).encode('utf-8'),
                           headers=headers,
-                          timeout=1)
+                          timeout=2)
         result = r.json()
         print(result)
     except Exception as e:

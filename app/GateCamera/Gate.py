@@ -1,11 +1,11 @@
 from .. import redis_db, logger, hSDK_handle
+from .camera_status import status
 
 
 def open_it(camera_ip):
     try:
-        # assert True if redis_db.get('open_gate_func').decode() == '1' else False, 'open_gate gate service stopped'
-
         if camera_ip in hSDK_handle.keys():
+            assert status(camera_ip), "道闸无法连接"
             hSDK_handle[camera_ip].open_gate()
             redis_db.delete(camera_ip + '_camera')
             return {'code': 'success', 'message': '已发送开门指令', 'data': ''}

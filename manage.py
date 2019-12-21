@@ -5,9 +5,9 @@ from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 import multiprocessing
 from app.MyModule import ResultCallBack, AllocateQueueWork
-from app.GateCamera import operateCamera
-
-__author__ = 'Koios'
+from app.GateCamera import operateCamera, camera_status
+from app.models import gate_dict
+from PTZ import ptz_server
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'production')
 manager = Manager(app)
@@ -22,13 +22,15 @@ logger.info('ResultCallBack.callback_worker started')
 # 启动调度程序
 AllocateQueueWork.allocate_worker(thread_num=10)
 
-IP = ['10.170.0.230', '10.170.0.231']
+for value in gate_dict.values():
+    for k, v in value.items():
+        if k in ['camera_in', 'camera_out']:
+            if camera_status.status(v):
+                logger.info(f">>> {v} connected!")
+            else:
+                logger.error(f">>> {v} cannot be connected, check the cameras power supply or network connection!")
 
-for ip in IP:
-    if ip in hSDK_handle.keys():
-        hSDK_handle[ip] = operateCamera.Camera(ip)
-        hSDK_handle[ip].connect_camera()
-        logger.debug(hSDK_handle[ip].device_status)
+ptz_server.run()
 
 
 def make_shell_context():

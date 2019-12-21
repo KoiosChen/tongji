@@ -23,9 +23,6 @@ def log_init():
     return logger
 
 
-# logging 配置
-logger = log_init()
-
 # 帧结构
 color = {'00': 'black', '01': 'green', '10': 'yellow', '11': 'red'}
 flash = {'0': 'no', '1': 'yes'}
@@ -54,6 +51,8 @@ def frame_analyze(host, data):
                 s.connect(address)
                 s.send(json.dumps(send_content).encode())
             s.close()
+        else:
+            raise ValueError("Frame format error")
     except Exception as e:
         logger.error(f'frame_analyze error {e}')
 
@@ -90,6 +89,7 @@ def run():
     try:
         sock = socket.socket(type=socket.SOCK_DGRAM)
         sock.bind(("0.0.0.0", port))
+        sock.setblocking(False)
         input = [sock]
 
     except Exception as e:
@@ -119,4 +119,6 @@ def run():
 
 
 if __name__ == '__main__':
+    # logging 配置
+    logger = log_init()
     run()

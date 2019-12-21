@@ -1,10 +1,27 @@
 from flask import request, jsonify
-from ..models import *
-from .. import socketio
+from ..models import PermissionIP
+from .. import socketio, logger
 from . import main
 from ..decorators import permission_ip
 from ..GateCamera import Gate
 from ..MyModule import send_socketio
+from ..PTZ.onvif_ptz import Move
+
+
+@main.route('/ptz', methods=['POST'])
+@permission_ip(PermissionIP)
+def ptz():
+    """
+    只允许PermissionIP中涉及的服务器访问
+    :return:
+    """
+    logger.debug(f">>> ptz request json is {request.json}")
+    request_data = request.json['data']
+    m = Move(ip=request_data['ip'],
+             port=int(request_data['port']),
+             user=request_data['user'],
+             passwd=request_data['passwd'])
+    return jsonify(getattr(m, request_data['direction']))
 
 
 @main.route('/open_gate', methods=['POST'])
