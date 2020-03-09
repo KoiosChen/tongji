@@ -5,7 +5,7 @@ from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 import multiprocessing
 from app.MyModule import ResultCallBack, AllocateQueueWork
-from app.GateCamera import operateCamera, camera_status
+from app.GateCamera import camera_status
 from app.models import gate_dict
 from PTZ import ptz_server
 
@@ -25,7 +25,9 @@ AllocateQueueWork.allocate_worker(thread_num=10)
 for value in gate_dict.values():
     for k, v in value.items():
         if k in ['camera_in', 'camera_out']:
-            if camera_status.status(v):
+            cs = camera_status.status(v)
+            logger.debug(cs)
+            if cs:
                 logger.info(f">>> {v} connected!")
             else:
                 logger.error(f">>> {v} cannot be connected, check the cameras power supply or network connection!")

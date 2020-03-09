@@ -1,12 +1,9 @@
 from ctypes import *
-from .. import init_logging, fdfs_client, p_msg_cb_func, work_q
+from .. import fdfs_client, p_msg_cb_func, work_q, logger
 from .plate_struct_class import LightParam
 from ..models import lib_so
 from ..MyModule import send_socketio
 import os
-
-logger = init_logging.init()
-
 
 class Camera:
     @staticmethod

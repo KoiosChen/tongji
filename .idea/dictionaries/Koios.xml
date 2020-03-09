@@ -5,6 +5,10 @@
       <w>bufsize</w>
       <w>hdlr</w>
       <w>levelname</w>
+      <w>passwd</w>
+      <w>pythonvalue</w>
+      <w>xmlvalue</w>
+      <w>zeep</w>
     </words>
   </dictionary>
 </component>

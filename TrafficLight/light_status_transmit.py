@@ -5,23 +5,8 @@ import sys
 from gevent import socket, select
 import queue
 import threading
-import logging
 import json
-
-
-def log_init():
-    # logging 配置
-    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S')
-    logger = logging.getLogger()
-    hdlr = logging.FileHandler("log.txt")
-    formatter = logging.Formatter(fmt='%(asctime)s - %(module)s-%(funcName)s - %(levelname)s - %(message)s',
-                                  datefmt='%m/%d/%Y %H:%M:%S')
-    hdlr.setFormatter(formatter)
-    logger.addHandler(hdlr)
-    logger.setLevel(logging.DEBUG)
-
-    return logger
-
+from app import logger
 
 # 帧结构
 color = {'00': 'black', '01': 'green', '10': 'yellow', '11': 'red'}

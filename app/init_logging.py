@@ -11,5 +11,7 @@ def init():
     hdlr.setFormatter(formatter)
     logger.addHandler(hdlr)
     logger.setLevel(logging.DEBUG)
+    a = list()
+    a.app
 
     return logger

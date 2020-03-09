@@ -21,7 +21,7 @@ def ptz():
              port=int(request_data['port']),
              user=request_data['user'],
              passwd=request_data['passwd'])
-    return jsonify(getattr(m, request_data['direction']))
+    return jsonify(getattr(m, request_data['direction'])())
 
 
 @main.route('/open_gate', methods=['POST'])

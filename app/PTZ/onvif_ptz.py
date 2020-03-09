@@ -2,6 +2,7 @@ from time import sleep
 from onvif import ONVIFCamera
 import zeep
 import sys
+from app import logger
 
 
 def zeep_pythonvalue(self, xmlvalue):
@@ -17,6 +18,7 @@ class Move:
             self.YMIN = -1
             self.ZMAX = 1
             self.ZMIN = -1
+            self.ip = ip
             mycam = ONVIFCamera(ip, port, user, passwd)
             # Create media service object
             media = mycam.create_media_service()
@@ -44,7 +46,6 @@ class Move:
 
             # Get range of pan and tilt
             # NOTE: X and Y are velocity vector
-            print(ptz_configuration_options.Spaces)
             self.XMAX = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].XRange.Max
             self.XMIN = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].XRange.Min
             self.YMAX = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].YRange.Max
@@ -52,54 +53,65 @@ class Move:
             self.ZMAX = ptz_configuration_options.Spaces.ContinuousZoomVelocitySpace[0].XRange.Max
             self.ZMIN = ptz_configuration_options.Spaces.ContinuousZoomVelocitySpace[0].XRange.Min
         except Exception as e:
-            print(e)
-            sys.exit()
+            logger.error(e)
 
-    def perform_move(self, timeout):
+    def perform_move(self, timeout=60):
         # Start continuous move
         self.ptz.ContinuousMove(self.request)
-        # Wait a certain time
         sleep(timeout)
         # Stop continuous move
         self.ptz.Stop({'ProfileToken': self.request.ProfileToken})
+        return {"status": True, "content": "camera {self.ip} is moved..."}
 
-    def up(self, timeout=0.1):
-        print('move up...')
+    def perform_stop(self):
+        # Stop continuous move
+        logger.info(f"PTZ STOP COMMAND to stop camera {self.ip}")
+        self.ptz.Stop({'ProfileToken': self.request.ProfileToken})
+        return {"status": True, "content": "camera {self.ip} is stopped..."}
+
+    def up(self, timeout=None):
+        logger.info(f'camera {self.ip} move up...')
         self.request.Velocity.PanTilt.x = 0
         self.request.Velocity.PanTilt.y = self.YMAX
         self.perform_move(timeout)
+        return {"status": True, "content": "camera {self.ip} move up..."}
 
-    def down(self, timeout=0.1):
-        print('move down...')
+    def down(self, timeout=None):
+        logger.info(f'camera {self.ip} move down...')
         self.request.Velocity.PanTilt.x = 0
         self.request.Velocity.PanTilt.y = self.YMIN
         self.perform_move(timeout)
+        return {"status": True, "content": "camera {self.ip} move down..."}
 
-    def right(self, timeout=0.1):
-        print('move right...')
+    def right(self, timeout=None):
+        logger.info(f'camera {self.ip} move right...')
         self.request.Velocity.PanTilt.x = self.XMAX
         self.request.Velocity.PanTilt.y = 0
         self.perform_move(timeout)
+        return {"status": True, "content": "camera {self.ip} move right..."}
 
-    def left(self, timeout=0.1):
-        print('move left...')
+    def left(self, timeout=None):
+        logger.info(f'camera {self.ip} move left...')
         self.request.Velocity.PanTilt.x = self.XMIN
         self.request.Velocity.PanTilt.y = 0
         self.perform_move(timeout)
+        return {"status": True, "content": "camera {self.ip} move left..."}
 
-    def zoom_in(self, timeout=0.1):
-        print('zoom in...')
+    def zoom_in(self, timeout=None):
+        logger.info(f'camera {self.ip} zoom in...')
         self.request.Velocity.PanTilt.x = 0
         self.request.Velocity.PanTilt.y = 0
         self.request.Velocity.Zoom = self.ZMAX
         self.perform_move(timeout)
+        return {"status": True, "content": "camera {self.ip} zoome in..."}
 
-    def zoom_out(self, timeout=0.1):
-        print('zoom out...')
+    def zoom_out(self, timeout=None):
+        logger.info(f'camera {self.ip} zoom out...')
         self.request.Velocity.PanTilt.x = 0
         self.request.Velocity.PanTilt.y = 0
         self.request.Velocity.Zoom = self.ZMIN
         self.perform_move(timeout)
+        return {"status": True, "content": "camera {self.ip} zoom out..."}
 
 
 if __name__ == '__main__':
