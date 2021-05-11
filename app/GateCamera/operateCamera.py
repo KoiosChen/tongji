@@ -5,6 +5,7 @@ from ..models import lib_so
 from ..MyModule import send_socketio
 import os
 
+
 class Camera:
     @staticmethod
     def ice_ipcsdk_plate(pvParam, pcIP, pcNumber, pcColor, pvPicData, nPicLen, pvPlatePicData, nPlatePicLen,
@@ -16,7 +17,14 @@ class Camera:
         logger.debug('There is a car waiting at the camera {}'.format(pcIP.decode()))
         # work_q.put(pcIP.decode())
         # send_socketio.run(pcIP.decode())
-        os.system('curl -d "ip=' + pcIP.decode() + '" -X POST http://127.0.0.1:12366/socket_test')
+        try:
+            logger.info("The pcNumber is : " + pcNumber.decode("gb2312"))
+            pc_number = pcNumber.decode("gb2312")
+        except Exception as e:
+            logger.error(f"print pcNumber error {e}")
+            pc_number = None
+        os.system(
+            'curl -d "ip=' + pcIP.decode() + '&pc_number=' + pc_number + '" -X POST http://127.0.0.1:12366/socket_test')
 
     def __init__(self, ip):
         logger.debug(f'Initate {ip}')
@@ -51,19 +59,23 @@ class Camera:
         logger.info(f'set light param result>> {light_result}')
 
     def capture_pic(self):
-        pvPicData = (c_char * 1048576)()
-        nPicSize = c_long(1048576)
-        nPicLen = c_long(0)
+        try:
+            pvPicData = (c_char * 1048576)()
+            nPicSize = c_long(1048576)
+            nPicLen = c_long(0)
 
-        logger.debug('capturing picture')
+            logger.debug('capturing picture')
 
-        capture_result = self.r.ICE_IPCSDK_Capture(self.hSDK, pvPicData, nPicSize, pointer(nPicLen))
+            capture_result = self.r.ICE_IPCSDK_Capture(self.hSDK, pvPicData, nPicSize, pointer(nPicLen))
 
-        logger.debug(f'capture result>> {capture_result} len>> {nPicLen.value}')
+            logger.debug(f'capture result>> {capture_result} len>> {nPicLen.value}')
 
-        ret = fdfs_client.upload_by_buffer(pvPicData, file_ext_name='jpg')
-        logger.info(ret)
-        return ret
+            ret = fdfs_client.upload_by_buffer(pvPicData, file_ext_name='jpg')
+            logger.info(ret)
+            return ret
+        except Exception as e:
+            logger.debug(f"capture pic fail for {e}")
+            raise Exception(f"capture pic fail for {e}")
 
     def open_gate(self):
         logger.info('Open gate {}'.format(self.ip))

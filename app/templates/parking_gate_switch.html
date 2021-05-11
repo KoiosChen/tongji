@@ -13,6 +13,77 @@
 													<i class="flaticon-map-location"></i>
 												</span>
                             <h3 class="m-portlet__head-text">
+                                西区场地环路道闸(入）
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="m-portlet__body">
+                    <img id="gate5_pic" alt="parking_entry" width="95%" src=""/>
+                </div>
+                <div class="m-portlet__foot">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 m--valign-middle">
+                            <p id="gate5_name"></p>
+                            ip: <p id="gate5_ip"></p>
+                            方向: <p id="gate5_direction"></p>
+                        </div>
+                        <div class="col-lg-6 m--align-right">
+                            <button type="submit" class="btn btn-brand" id="gate5_open">
+                                Open
+                            </button>
+                            <button type="submit" class="btn btn-brand" id="gate5_close">
+                                close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--begin::Portlet-->
+            <div class="m-portlet">
+                <div class="m-portlet__head">
+                    <div class="m-portlet__head-caption">
+                        <div class="m-portlet__head-title">
+												<span class="m-portlet__head-icon">
+													<i class="flaticon-map-location"></i>
+												</span>
+                            <h3 class="m-portlet__head-text">
+                                西区场地环路道闸（出）
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="m-portlet__body">
+                    <img id="gate6_pic" alt="parking_entry" width="95%" src=""/>
+                </div>
+                <div class="m-portlet__foot">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 m--valign-middle">
+                            <p id="gate6_name"></p>
+                            ip: <p id="gate6_ip"></p>
+                            方向: <p id="gate6_direction"></p>
+                        </div>
+                        <div class="col-lg-6 m--align-right">
+                            <button type="submit" class="btn btn-brand" id="gate6_open">
+                                Open
+                            </button>
+                            <button type="submit" class="btn btn-brand" id="gate6_close">
+                                close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="m-portlet">
+                <div class="m-portlet__head">
+                    <div class="m-portlet__head-caption">
+                        <div class="m-portlet__head-title">
+												<span class="m-portlet__head-icon">
+													<i class="flaticon-map-location"></i>
+												</span>
+                            <h3 class="m-portlet__head-text">
                                 教学楼门口道闸
                             </h3>
                         </div>
@@ -172,7 +243,7 @@
                 $('#' + msg.content.gate + '_ip').text(msg.content.camera_ip);
                 $('#' + msg.content.gate + '_direction').text(msg.content.camera_type);
             });
-            $('#gate1_open,#gate2_open, #gate3_open, #gate4_open').click(function () {
+            $('#gate1_open,#gate2_open, #gate3_open, #gate4_open, #gate5_open, #gate6_open').click(function () {
 
                 let gate_id = $(this).attr('id');
                 let gate = gate_id.split('_')[0];
@@ -188,7 +259,7 @@
                 }
             });
 
-            $('#gate1_close, #gate2_close, #gate3_close, #gate4_close').click(function () {
+            $('#gate1_close, #gate2_close, #gate3_close, #gate4_close, #gate5_close, #gate6_close').click(function () {
                 let gate_id = $(this).attr('id');
                 let gate = gate_id.split('_')[0];
                 let camera_ip = $('#' + gate + '_ip').text();

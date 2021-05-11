@@ -12,14 +12,18 @@ from app import global_ptz
 from app import logger
 import pymysql
 
+special_camera = ['10.170.0.100']
 
-def register_camera_ptz(ip, port=80, user='admin', passwd='Admin123'):
-    if ip not in global_ptz.keys():
+
+def register_camera_ptz(ip, port=80, user='admin', passwd='Admin123', force=False):
+    if ip not in global_ptz.keys() or force:
         logger.info(f"Camera {ip} is not exist in global_ptz, create new one!")
-        ptz_obj = Move(**{'ip': ip,
-                          'port': port,
-                          'user': user,
-                          'passwd': passwd})
+        move_dict = {'ip': ip,
+                     'port': port,
+                     'user': user if ip not in special_camera else 'orca',
+                     'passwd': passwd if ip not in special_camera else 'orca1234'}
+        logger.info(move_dict)
+        ptz_obj = Move(**move_dict)
         global_ptz[ip] = ptz_obj
     else:
         logger.info(f"Camera {ip} is exist in global_ptz!")
@@ -39,8 +43,8 @@ def callback(status, content):
 
 def ptz_control(host, data):
     logger.info(f'Got ptz command from {host}')
+    command = json.loads(data.decode())
     try:
-        command = json.loads(data.decode())
         logger.info(f"The command from {host} is {command}")
         # 注册摄像头PTZ服务，如果在全局变量中未找到注册成功的对象，则重新注册该摄像头
         ptz_obj = register_camera_ptz(ip=command['ip'],
@@ -53,6 +57,8 @@ def ptz_control(host, data):
         callback(result.get("status"), result.get("content"))
     except Exception as e:
         logger.error(f"PTZ command from {host}, the data is {data}. Frame_analyze error {e}")
+        register_camera_ptz(ip=command['ip'], port=int(command['port']), user=command['user'], passwd=command['passwd'],
+                            force=True)
 
 
 class StartThread(threading.Thread):

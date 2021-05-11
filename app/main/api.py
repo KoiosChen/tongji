@@ -56,9 +56,10 @@ def socket_test():
     :return:
     """
     ip = request.form.get('ip')
-    print(ip)
+    pc_number = request.form.get('pc_number')
+    logger.debug(f"request parameters are {ip} {pc_number}")
     socketio.emit('test', 'socket test', namespace='/test')
-    send_socketio.run(ip)
+    send_socketio.run(ip, pc_number)
     return jsonify({'status': 'ok'})
 
 

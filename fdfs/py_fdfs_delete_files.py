@@ -7,8 +7,10 @@ db = pymysql.connect("10.190.0.249", "root", "root", "evaluation")
 cursor = db.cursor()
 
 # 使用 execute()  方法执行 SQL 查询
-cursor.execute("select filename from camera_recorders where startTime <= '2019-12-01 00:00:00'")
+cursor.execute("select filename from camera_recorders where startTime <= '2021-1-10 00:00:00' order by startTime desc ")
 
 for i in cursor:
     if i[0]:
         os.popen(f"fdfs_delete_file /etc/fdfs/client.conf {i[0]}")
+
+cursor.close()

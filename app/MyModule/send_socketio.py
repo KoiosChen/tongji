@@ -1,18 +1,20 @@
-from app import socketio, redis_db, hSDK_handle
+from app import socketio, redis_db, hSDK_handle, logger
 from app.models import img_url, gate_dict
 import json
 import requests
 import time
 
 
-def run(camera_ip):
+def run(camera_ip, pc_number):
+    logger.info(f"camera {camera_ip} got pc_number {pc_number}")
     camera_json = \
         [{'gate': gk, 'camera_type': ck, 'camera_ip': cv} for gk, gv in gate_dict.items() for ck, cv in gv.items() if
          cv == camera_ip][0]
     try:
         ret = hSDK_handle[camera_ip].capture_pic()
-    except:
-        ret = {}
+    except Exception as e:
+        logger.error(f"capture picture error -> {e}")
+        ret = dict()
         ret['Remote file_id'] = 'group1/M00/00/0D/Cr4A-1104feAbD6fABAAAHPcgn8619.jpg'.encode()
 
     camera_json['pic_path'] = img_url + '/' + ret['Remote file_id'].decode()

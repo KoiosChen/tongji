@@ -25,6 +25,6 @@ gate_dict = {'gate1': {'camera_in': '10.170.0.230',
 
 lib_so = '/opt/tongji/app/static/ice_ipcsdk_lib/libice_ipcsdk.so'
 
-img_url = 'http://221.181.89.66:811'
+img_url = 'http://221.181.123.242:811'
 
 CONNECT_RETRY_TIMES = 1
